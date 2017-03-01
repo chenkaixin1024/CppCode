@@ -1,0 +1,326 @@
+typedef int DataType;
+
+
+
+struct Node
+{
+	Node(const DataType& data)
+		: _data(data)
+		, _pNext(NULL)
+		, _pPre(NULL)
+	{}
+
+	DataType _data;
+	Node* _pNext;
+	Node* _pPre;
+};
+
+class List
+{
+public:
+	List()
+		:_pHead(NULL),
+		_pTail(NULL),
+		_size(0)
+	{
+		cout<<"List():"<<this<<endl;
+	}
+	List(size_t n, const DataType& data = DataType())
+		:_pHead(NULL),
+		_pTail(NULL),
+		_size(0)
+	{
+		 size_t index=0;
+		 for(;index<n;index++)
+		 {
+			 PushBack(data);
+		 }
+		
+	}
+	List(const List& l)
+		:_pHead(NULL),
+		_pTail(NULL),
+		_size(0)
+	{
+		size_t index=0;
+		Node* pcur=l._pHead;
+		for(;index<l._size;index++)
+		{
+			PushBack(pcur->_data);
+			pcur=pcur->_pNext;
+		}
+	}
+	List& operator=(const List& l)
+	{
+		if(this!=&l)
+		{
+			if(!_pHead)
+			{
+				Node* pcur=l._pHead;
+				while(pcur)
+				{
+					PushBack(pcur->_data);
+					pcur=pcur->_pNext;
+				}
+			}
+			else
+			{
+				Node* ptmp=_pHead;
+				
+				size_t tmp=_size;
+				_pHead=NULL;
+				_pTail=NULL;
+				_size=0;
+				Node* pcur=l._pHead;
+				while(pcur)
+				{
+					PushBack(pcur->_data);
+					pcur=pcur->_pNext;
+				}
+
+				
+				
+				while(ptmp)
+				{
+					pcur=ptmp;
+					ptmp=ptmp->_pNext;
+					delete pcur;
+				}
+				pcur=NULL;
+			}
+		}
+		return *this;
+	}
+	~List()
+	{
+		if(_pHead)
+		{
+			Node* ptmp=_pHead;
+			Node* pcur=ptmp;
+			while(ptmp)
+			{
+				pcur=ptmp;
+				ptmp=ptmp->_pNext;
+				delete pcur;
+			}
+			pcur=NULL;
+			_pHead=NULL;
+			_pTail=NULL;
+			_size=0;
+			cout<<"~List():"<<this<<endl;
+		}
+	}
+
+//////////////////////////////////////////////////
+	void PushBack(const DataType& data)
+	{
+		
+		if(_pHead==NULL)
+		{
+			_pHead=BuyNode(data);
+			_pTail=_pHead;
+			_size++;
+		}
+		else
+		{
+			Node* ptmp=_pTail;
+			_pTail->_pNext=BuyNode(data);
+			_pTail=_pTail->_pNext;
+			_pTail->_pPre=ptmp;
+			_size++;
+		}
+	}
+	void PopBack()
+	{
+		 if(_pTail==NULL)
+		 {
+			 return ;
+		 }
+
+		 if(_pHead==_pTail)
+		 {
+			 _size--;
+			 delete _pTail;
+			 _pHead=NULL;
+			 _pTail=NULL;
+		 }
+		 else
+		 {
+			Node* ptmp=_pTail->_pPre;
+			ptmp->_pNext=NULL;
+			delete _pTail;
+			_size--;
+			_pTail=ptmp;
+		 }
+	}
+	void PushFront(const DataType& data)
+	{
+		if(_pHead==NULL)
+		{
+			_pHead=BuyNode(data);
+			_pTail=_pHead;
+			_size++;
+		}
+		else
+		{
+			Node* ptmp=_pHead;
+			_pHead->_pPre=BuyNode(data);
+			_pHead=_pHead->_pPre;
+			_pHead->_pNext=ptmp;
+			_size++;
+		}
+
+	}
+	void PopFront()
+	{
+		if(_pHead==NULL)
+		{
+			return ;
+		}
+
+		if(_pHead==_pTail)
+		 {
+			 _size--;
+			 delete _pHead;
+			 _pHead=NULL;
+			 _pTail=NULL;
+		 }
+		else
+		{
+			Node* ptmp=_pHead->_pNext;
+			ptmp->_pPre=NULL;
+			delete _pHead;
+			_size--;
+			_pHead=ptmp;
+		}
+		
+	}
+	void Insert(Node* pos, const DataType& data)
+	{
+		assert(pos);
+		if(pos==_pHead)
+		{
+			PushFront(data);
+		}
+		else
+		{
+			Node* pNode=BuyNode(data);
+
+			pNode->_pNext=pos;
+			pNode->_pPre=pos->_pPre;
+			pos->_pPre->_pNext=pNode;
+			pos->_pPre=pNode;
+			_size++;
+		}
+		
+	}
+	void Erase(Node* pos)
+	{
+		assert(pos);
+
+		if(pos==_pHead)
+		{
+			PopFront();
+		}
+		else if(pos==_pTail)
+		{
+			PopBack();
+		}
+		else
+		{
+			pos->_pPre->_pNext=pos->_pNext;
+			pos->_pNext->_pPre=pos->_pPre;
+			delete pos;
+			pos=NULL;
+			_size--;
+		}
+	}
+	void Assign(size_t n, const DataType data = DataType())
+	{
+		if(_pHead)
+		{
+			Node* ptmp=_pHead;
+			Node* pcur=ptmp;
+			while(ptmp)
+			{
+				pcur=ptmp;
+				ptmp=ptmp->_pNext;
+				delete pcur;
+			}
+			pcur=NULL;
+			_pHead=NULL;
+			_pTail=NULL;
+			_size=0;
+		}
+		size_t index=0;
+		 for(;index<n;index++)
+		 {
+			 PushBack(data);
+		 }
+		
+	}
+	void Clear()
+	{
+		this->~List();
+	}
+
+	////////////Acess////////////////////
+	Node& Front()
+	{
+		return *_pHead;
+	}
+	const Node& Front()const
+	{
+		return *_pHead;
+	}
+	Node& Back()
+	{
+		return *_pTail;
+	}
+	const Node& Back()const
+	{
+		return *_pTail;
+	}
+	Node& operator[](size_t index)
+	{
+		size_t i=0;
+		Node* pcur=_pHead;
+		for(;i<index;i++)
+		{
+			pcur=pcur->_pNext;
+		}
+		return *pcur;
+	}
+	const Node& operator[](size_t index)const
+	{
+		size_t i=0;
+		Node* pcur=_pHead;
+		for(;i<index;i++)
+		{
+			pcur=pcur->_pNext;
+		}
+		return *pcur;
+	}
+	size_t Size()const
+	{
+		return _size;
+	}
+	bool Empty()const
+	{
+		if(_size==0)
+			return true;
+		else
+			return false;
+	}
+
+private:
+	Node* BuyNode(const DataType& data)
+	{
+		return (new Node(data));
+	}
+
+private:
+	Node* _pHead;
+	Node* _pTail;
+	size_t _size;
+};
