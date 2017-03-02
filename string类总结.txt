@@ -1,0 +1,242 @@
+对于String类，对象之间的相互拷贝与赋值是相当重要的一项功能，下面我们就来试着实现这一功能。
+class String
+{
+public:
+	String(const char* str)                       //构造函数
+		:_pstr(new char [strlen(str)+1])
+	{
+		strcpy(_pstr,str);
+		cout<<"string():"<<this<<endl;
+	}
+	String(const String& str)                    //拷贝构造函数
+	{
+		if(this!=&str)
+		{
+			_pstr=str._pstr;
+		}
+	}
+
+	~String()                                 //析构函数
+	{
+		delete[] _pstr;
+		_pstr=NULL;
+	}
+private:
+	char* _pstr;
+};
+ 
+对于上面的这个版本的拷贝，我们会发现它有一个明显的Bug，就是我们在String类中给出了一个char*类型的指针以指向我们给定的字符串，这里我们观察拷贝构造函数，它仅仅对于指针的简单的赋值，也就是我们所说的浅拷贝，这样会出现什么问题呢？
+很明显，通过浅拷贝之后，由于是简单指针之间的赋值，那么就会有两个不同的指针来指向同一块空间，而这两个指针分别是来自两个不同的对象，对于类的对象而言，最终都会调用析构函数来清理资源，这样的话同一块空间不就被释放了两次了吗？这显然是会崩溃的。
+对于上面所遇到的问题，我们通常会在拷贝的时候为我们的新对象开辟一块新空间，也就是所谓的深拷贝。
+
+class String
+{
+public:
+	String(const char* str="\0")                      //构造函数
+	{
+		if(str==NULL)
+		{
+			_pstr=new char[1];
+			*_pstr='\0';
+		}
+		else
+		{
+			_pstr=new char[strlen(str)+1];
+			strcpy(_pstr,str);
+		}
+		cout<<"string():"<<this<<endl;
+	}
+	String(const String& str)                        //拷贝构造函数
+	{
+		_pstr=new char[strlen(str._pstr)+1];
+		strcpy(_pstr,str._pstr);
+	}
+
+	String& operator=(String& str)                   //赋值运算符重载
+	{
+		if(this!=&str)
+		{
+			char* sTemp=_pstr;
+			_pstr=new char[strlen(str._pstr)+1];  //构造新空间
+			strcpy(_pstr,str._pstr);   //拷贝内容
+			delete[] sTemp;      //释放旧空间
+		}
+		return *this;
+	}
+
+	~String()                                      //析构函数
+	{
+		if(_pstr)
+		{
+			delete[] _pstr;
+			_pstr=NULL;
+		}
+		cout<<"~String():"<<this<<endl;
+	}
+private:
+	char* _pstr;
+};
+
+这种方法主要是改动了拷贝构造函数与赋值运算符重载，让它们在进行拷贝的时候为我们的字符串开辟所需的空间。但是在这个版本的基础上我们可以进行一点小小的改动。
+class String
+{
+public:
+	String(const char* str="\0")                    //构造函数
+	{
+		if(str==NULL)
+		{
+			_pstr=new char[1];
+			*_pstr='\0';
+		}
+		else
+		{
+			_pstr=new char[strlen(str)+1];
+			strcpy(_pstr,str);
+		}
+		cout<<"string():"<<this<<endl;
+	}
+	String(const String& str)                             //拷贝构造函数
+		:_pstr(NULL)                   //事先将_pstr置空，防止在与tmp._pstr交换的时候是随机值，导致tmp._pstr中保存了随机值，导致在释放的时候出错
+	{
+		String tmp(str._pstr);
+		std::swap(_pstr,tmp._pstr);
+	}
+
+	
+	String& operator=(String str)                   //赋值运算符重载                        
+	{
+ 		std::swap(_pstr,str._pstr);
+		return *this;
+	}
+
+        ~String() //析构函数
+        {
+                if(_pstr)
+                {
+                    delete[] _pstr;
+                    _pstr=NULL;
+                }
+                cout<<"~String():"<<this<<endl;
+        }
+private:char* _pstr;
+};
+上面的赋值运算符重载还有另外一种类似的方法
+String& operator=(String& str)
+{
+	if(this!=&str)
+	{
+		String tmp(str);
+		std::swap(_pstr,tmp._pstr);
+	}
+	return *this;
+}
+两种方法在于传参的时候是传引用还是传临时变量，从而影响是否进行对于是否是对自己赋值的判断。
+
+
+深拷贝固然可以解决问题，但是浅拷贝真的无法解决问题吗？
+这里我们可以想想，浅拷贝的问题在于让多个指针指向同一块空间，从而导致在清理资源的时候，进行了多次释放。那么假如我们事先知道这块空间有多少个对象使用，然后在释放之前进行判断，判断这块空间是不是还有别人在用，如果有的话，那我们可以先不释放这块空间，知道你是最后一个使用这块空间的了，那这块空间不就可以进行释放了，这样也就不会有问题了。
+由此，我们可以用下面两种方法：
+1.在对象中构建一个int*的指针，让它指向一块4字节的空间，并在这块空间中保存当前使用_pstr指向的空间的对象个数。（计数版本）
+class String
+{
+public:
+	String(const char* str="\0")
+	{
+		if(str==NULL)
+		{
+			_pstr=new char[1];
+			*_pstr='\0';
+		}
+		else
+		{
+			_pstr=new char[strlen(str)+1];
+			strcpy(_pstr,str);
+		}
+		count=new int[1];
+		*count=1;
+		cout<<"string():"<<this<<endl;
+	}
+	String(const String& str)
+		:_pstr(str._pstr),
+		count(str.count)
+	{
+		(*count)++;
+	}
+
+	String& operator=(String str)
+	{
+		_pstr=str._pstr;
+		count=str.count;
+		(*count)++;
+		return *this;
+	}
+
+	~String()
+	{
+		if(!(--(*count)))
+		{
+			delete[] _pstr;
+			_pstr=NULL;
+		}
+		cout<<"~String():"<<this<<endl;
+	}
+private:
+	char* _pstr;
+	int* count;
+};
+
+
+2.除此之外，我们可以模仿一下new[ ]的实现原理，在这块空间的起始处预留4字节来保存当前使用这块空间的对象个数。（写实拷贝）
+class String
+{
+public:
+	String(const char* str="\0")
+	{
+		if(str==NULL)
+		{
+			_pstr=new char[5];
+			_pstr+=4;
+			GetCount(_pstr)=1;
+			*_pstr='\0';
+		}
+		else
+		{
+			_pstr=new char[strlen(str)+5];
+			_pstr+=4;
+			GetCount(_pstr)=1;
+			
+			strcpy(_pstr,str);
+		}
+		cout<<"string():"<<this<<endl;
+	}
+	String(const String& str)
+		:_pstr(str._pstr)
+	{
+		
+		GetCount(_pstr)++;
+	}
+
+	String& operator=(String str)
+	{
+		_pstr=str._pstr;
+		GetCount(_pstr)++;
+		return *this;
+	}
+
+	~String()
+	{
+		if(!(--GetCount(_pstr)))
+		{
+			_pstr-=4;
+			delete[] _pstr;
+			_pstr=NULL;
+		}
+		cout<<"~String():"<<this<<endl;
+	}
+	int& GetCount(char* _str)
+	{
+		return *((int*)(_str-4));
+	}
+private:
+	char* _pstr;
+};
