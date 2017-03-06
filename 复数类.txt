@@ -1,0 +1,190 @@
+enum status
+{
+	ERRO,
+	TRUE
+};
+enum status g_st=TRUE;
+
+class Complex
+{
+public:
+	Complex(const double dReal, const double dImage)
+		:_dReal(dReal),
+		_dImage(dImage)
+	{
+		cout<<"Complex():"<<this<<endl;
+	}
+	Complex(const Complex& complex)
+	{
+		_dReal=complex._dReal;
+		_dImage=complex._dImage;
+		cout<<"Complex(Complex&):"<<this<<endl;
+	}
+	~Complex()
+	{
+		cout<<"~Complex():"<<this<<endl;
+	}
+	Complex& operator=(const Complex& complex)
+	{
+		_dReal=complex._dReal;
+		_dImage=complex._dImage;
+		return *this;
+	}
+	Complex operator+(const Complex& complex)
+	{
+		Complex tmp(*this);
+		tmp._dReal=_dReal+complex._dReal;
+		tmp._dImage=_dImage+complex._dImage;
+		return tmp;
+	}
+	Complex operator-(const Complex& complex)
+	{
+		Complex tmp(*this);
+		tmp._dReal=_dReal-complex._dReal;
+		tmp._dImage=_dImage-complex._dImage;
+		return tmp;
+	}
+	Complex operator*(const Complex& complex)
+	{
+		Complex tmp(*this);
+		tmp._dReal=_dReal*complex._dReal-_dImage*complex._dImage;
+		tmp._dImage=_dReal*complex._dImage+_dImage*complex._dReal;
+		return tmp;
+	}
+	Complex operator/(const Complex& complex)
+	{
+		Complex tmp(*this);
+		double d=complex._dReal*complex._dReal+complex._dImage*complex._dImage;
+		tmp._dReal=(_dReal*complex._dReal+_dImage*complex._dImage)/d;
+		tmp._dImage=(-_dReal*complex._dImage+_dImage*complex._dReal)/d;
+		return tmp;
+	}
+	Complex& operator+=(const Complex& complex)
+	{
+		_dReal=_dReal+complex._dReal;
+		_dImage=_dImage+complex._dImage;
+		return *this;
+	}
+	Complex& operator-=(const Complex& complex)
+	{
+		_dReal=_dReal-complex._dReal;
+		_dImage=_dImage-complex._dImage;
+		return *this;
+	}
+	Complex& operator*=(const Complex& complex)
+	{
+		double tmp=_dReal;
+		_dReal=_dReal*complex._dReal-_dImage*complex._dImage;
+		_dImage=tmp*complex._dImage+_dImage*complex._dReal;
+		return *this;
+	}
+	Complex& operator/=(const Complex& complex)
+	{
+		double d=complex._dReal*complex._dReal+complex._dImage*complex._dImage;
+		double tmp=_dReal;
+		_dReal=(_dReal*complex._dReal+_dImage*complex._dImage)/d;
+	    _dImage=(-tmp*complex._dImage+_dImage*complex._dReal)/d;
+		return *this;
+	}
+	bool operator>(const Complex& complex)
+	{
+		if(_dImage==0&&complex._dImage==0)
+		{
+			
+			if(_dReal>complex._dReal)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			g_st=ERRO;
+		}
+	}
+	bool operator >=(const Complex& complex)
+	{
+		if(_dImage==0&&complex._dImage==0)
+		{
+			
+			if(_dReal>=complex._dReal)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			g_st=ERRO;
+		}
+	}
+	bool operator <(const Complex& complex)
+	{
+		if(_dImage==0&&complex._dImage==0)
+		{
+			
+			if(_dReal<complex._dReal)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			g_st=ERRO;
+		}
+	}
+	bool operator <=(const Complex& complex)
+	{
+		if(_dImage==0&&complex._dImage==0)
+		{
+			
+			if(_dReal<=complex._dReal)
+			{
+				return true;
+			}
+			else
+			{
+				return false;
+			}
+		}
+		else
+		{
+			g_st=ERRO;
+		}
+	}
+	bool operator ==(const Complex& complex)
+	{
+		if(_dReal==complex._dReal&&_dImage==complex._dImage)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	bool operator !=(const Complex& complex)
+	{
+		if(*this==complex)
+		{
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
+private:
+	double _dReal;
+    double _dImage;
+};

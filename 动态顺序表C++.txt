@@ -1,0 +1,311 @@
+
+#define RECAPACITY 5
+
+typedef int DataType;
+class Vector
+{
+public:
+	explicit Vector(size_t capacity = 3)
+		:_pData(new DataType[capacity]),
+		_capacity(capacity),
+		_size(0)
+	{
+		size_t index=0;
+		for(;index<capacity;index++)
+		{
+			_pData[index]=0;
+		}
+		cout<<"Vector()"<<endl;
+	}
+
+	// 有size个值为data的元素
+	Vector(size_t n, const DataType& data)
+		:_pData(new DataType[n]),
+		_capacity(n),
+		_size(n)
+	{
+		
+		DataType* p=_pData;
+		size_t index=0;
+		for(;index<n;index++)
+		{
+			*p=data;
+			p++;
+		}
+	}
+
+	Vector(const Vector& v)
+		: _capacity(v._capacity)
+		, _size(v._size)
+	{
+		_pData = new DataType[_capacity];
+
+		memcpy(_pData, v._pData, sizeof(DataType)*_capacity);
+
+		
+	}
+
+	Vector& operator=(const Vector& v)
+	{
+		if(this!=&v)
+		{
+			DataType* ptmp=_pData;
+			_capacity=v._capacity;
+			_size=v._size;
+			_pData=new DataType[_capacity];
+			memcpy(_pData, v._pData, sizeof(DataType)*_capacity);
+			delete[] ptmp;
+		}
+		return *this;
+	}
+
+	~Vector()
+	{
+		if(_pData)
+		{
+			delete[] _pData;
+			_pData=NULL;
+			_capacity=0;
+			_size=0;
+		}
+		cout<<"~Vector():"<<this<<endl;
+	}
+
+	////////////////////////////////////////////////////////////////////////////
+	void PushBack(const DataType& data)
+	{
+		if(!_CheckCapacity())
+		{
+			_pData[_size]=data;
+			_size++;
+		}
+		else
+		{
+			ReSize(_capacity+1,data);
+			
+		}
+
+	}
+	void PopBack()
+	{
+		if(_pData==NULL||_size==0)
+			return ;
+		
+		_size--;
+	}
+	void Insert(size_t pos, const DataType& data)
+	{
+		if(pos<0||pos>_size)
+			return ;
+
+		if(!_CheckCapacity())
+		{
+			size_t tmp=_size;
+			for(;tmp>pos;tmp--)
+			{
+				_pData[tmp]=_pData[tmp-1];
+				
+			}
+			_pData[tmp]=data;
+			_size++;
+		}
+		else
+		{
+			_size++;
+			DataType* ptmp=_pData;
+			_pData=new DataType[_capacity+RECAPACITY];
+			_capacity=_capacity+RECAPACITY;
+			size_t index=0;
+			for(;index<_size;index++)
+			{
+				if(index<pos)
+				{
+					_pData[index]=ptmp[index];
+				}
+				else if(index==pos)
+				{
+					_pData[index]=data;
+				}
+				else
+				{
+					_pData[index]=ptmp[index-1];
+				}
+			}
+
+			delete[] ptmp;
+		}
+
+	}
+	void Erase(size_t pos)
+	{
+		if(pos<0||pos>=_size)
+			return ;
+
+		if(pos==_size-1)
+		{
+			_size--;
+		}
+		else
+		{
+			_size--;
+			size_t index=pos;
+			for(;index<_size;index++)
+			{
+				_pData[index]=_pData[index+1];
+			}
+		}
+	}
+	int Find(const DataType& data)const
+	{
+		size_t index=0;
+		int count=0;
+		for(;index<_size;index++)
+		{
+			if(_pData[index]==data)
+			{
+				count++;
+			}
+		}
+		return count;
+	}
+	void Clear()
+	{
+		_size=0;
+	}
+	size_t Size()const
+	{
+		return _size;
+	}
+	void ReSize(size_t size, const DataType& data = DataType())
+	{
+		if(size<=_capacity)
+		{
+			_capacity=size;
+			if(_size>size)
+			{
+				_size=size;
+			}
+		}
+		else
+		{
+			DataType* ptmp=_pData;
+			size_t index=0;
+			_pData=new DataType[size];
+			for(;index<_capacity;index++)
+			{
+				_pData[index]=ptmp[index];
+			}
+
+			for(;index<size;index++)
+			{
+				_pData[index]=data;
+			}
+
+			delete[] ptmp;
+
+			_capacity=size;
+			_size=size;
+		}
+	}
+	size_t Capacity()const
+	{
+		return _capacity;
+	}
+	bool Empty()const
+	{
+		if(_size==0)
+			return true;
+		else
+			return false;
+	}
+	DataType& Front()
+	{
+		assert(_size);
+
+		return _pData[0];
+	}
+	const DataType& Front()const
+	{
+		assert(_size);
+
+		return _pData[0];
+	}
+	DataType& Back()
+	{
+		assert(_size);
+
+		return _pData[_size-1];
+	}
+	const DataType& Back()const
+	{
+		assert(_size);
+
+		return _pData[_size-1];
+	}
+	void Assign(size_t n, const DataType& data = DataType())
+	{
+		_size=0;
+		while(_capacity<n)
+		{
+			DataType* ptmp=_pData;
+			_pData=new DataType[_capacity+RECAPACITY];
+			_capacity=_capacity+RECAPACITY;
+		}
+		size_t index=0;
+		for(;index<n;index++)
+		{
+			_pData[index]=data;
+		}
+		_size=n;
+	}
+	DataType& operator[](size_t index)
+	{
+
+		return _pData[index];
+	}
+	const DataType& operator[](size_t index)const
+	{
+
+		return _pData[index];
+	}
+	DataType& At(size_t index)
+	{
+		assert(index<=_size);
+
+		return _pData[index];
+	}
+	const DataType& At(size_t index)const
+	{
+		assert(index<=_size);
+
+		return _pData[index];
+	}
+
+	private:
+	bool _CheckCapacity()
+	{
+		if(_size==_capacity)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	friend std::ostream& operator<<(std::ostream& _cout, const Vector& v);
+private:
+	DataType* _pData;
+	size_t _capacity;
+	size_t _size;
+};
+
+ostream& operator<<(std::ostream& _cout, const Vector& v)
+{
+	size_t index=0;
+	for(;index<v._size;index++)
+	{
+		cout<<v._pData[index]<<" ";
+	}
+	return cout;
+}
