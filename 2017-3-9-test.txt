@@ -1,0 +1,73 @@
+#include <iostream>
+using namespace std;
+
+
+//void fun(int a)
+//{
+//	cout<<"fun()"<<endl;
+//}
+//
+//void fun(char a)
+//{}
+//extern "C" void fun(int a);
+//void fun(int a);
+//
+//int main()
+//{
+//	fun(2);
+//	return 0;
+//}
+
+//void fun()
+//{}
+//
+//int main()
+//{
+//	fun(10);
+//}
+
+
+void TestRef()
+{
+	int iNum0 = 10;
+	int &iNum1 = iNum0;
+	iNum1 = 20;
+}
+
+void TestConstRef()
+{
+	int iNum0 = 10;
+	//const int &iNum1 = iNum0;
+	//int &iNum2 = iNum1;
+	//int &iNum2 = iNum0;
+	//const int &iNum2 = iNum1;
+	//int &iNum2 = 20;
+	const int &iNum3 = 20;
+	float fNum4 = 10.0f;
+	//int &iNum5 = fNum4;
+	const int &iNum5 = fNum4;
+}
+
+int main()
+{
+	//TestRef();
+	//TestConstRef();
+	/*int a=10;
+	int* p=&a,b=&a;
+	p=&a;
+	b=&a;*/
+
+	//int a=1.01;
+	//int i=0,&r1=i;
+	//double d=0,&r2=d;
+	//r2=3.14;
+	////r2=r1;
+	////i=r2;
+	//r1=d;
+
+	int i,&r=i;
+	i=5;
+	r=10;
+	cout<<i<<" "<<r<<endl;
+	return 0;
+}
