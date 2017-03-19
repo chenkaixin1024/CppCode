@@ -1,0 +1,218 @@
+#include <iostream>
+using namespace std;
+
+#include <deque>
+
+//#include <stdio.h>
+//
+//#include <stdarg.h>
+//
+//int myprintf(char* str,...)
+//{
+//	va_list arg;
+//	va_start(arg,str);
+//	while(*str!='\0')
+//	{
+//		if(*str=='%')
+//		{
+//			if(*(str+1)=='c')
+//			{
+//				str++;
+//				putchar(va_arg(arg,char));
+//			}
+//			else
+//			{
+//				putchar(*str);
+//			}
+//		}
+//		else
+//		{
+//			putchar(*str);
+//		}
+//		str++;
+//	}
+//
+//
+//	va_end(arg);
+//}
+//
+//int main()
+//{
+//	myprintf("%c",'a');
+//	//putchar('a');
+//	return 0;
+//}
+
+
+
+//
+//int main()
+//{
+//	static int a=0;
+//	a=5;
+//	return 0;
+//}
+
+
+
+//
+//template<class T,template<class,class> class Con = deque>
+//class Stack
+//{
+//public:
+//	void Push(const T& x)
+//	{
+//		_c.push_back(x);
+//	}
+//	void Pop()
+//	{
+//		_c.pop_back();
+//	}
+//	T& Top()
+//	{
+//		return _c.back();
+//	}
+//	const T& Top()const
+//	{
+//		return _c.back();
+//	}
+//	bool Empty()const
+//	{
+//		return _c.empty();
+//	}
+//	size_t Size()const
+//	{
+//		return _c.size();
+//	}
+//
+//protected:
+//	Con<T,allocator<T> > _c;
+//};
+
+
+
+
+
+//template<typename T,double* N>
+//T fun(const double& x)
+//{
+//	return *N;
+//}
+//
+//
+//int main()
+//{
+//	double d;
+//	//fun<double,&d>(2.0);
+//	return 0;
+//}
+
+
+
+//template<double* N>
+//class A
+//{
+//
+//};
+//double d=2.0;
+//int main()
+//{
+//	//const double d=2.0;
+//	A<&d>;
+//	return 0;
+//}
+
+
+//template<typename T>
+//class A
+//{
+//	void fun();
+//};
+//
+//
+//
+//template<typename T>
+//void A<T>::fun()
+//{}
+//
+//template<>
+//class A<int>
+//{
+//	void fun();
+//};
+//
+//void A<int>::fun()
+//{}
+
+
+
+
+//
+//template <typename T>
+//class SeqList
+//{
+//public :
+//	SeqList();
+//	~ SeqList();
+//private :
+//	int _size ;
+//	int _capacity ;
+//	T* _data ;
+//};
+//template<typename T>
+//SeqList <T>:: SeqList()
+//	: _size(0)
+//	, _capacity(10)
+//	, _data(new T[ _capacity])
+//	{
+//		cout<<"SeqList<T>" <<endl;
+//	}
+//template<typename T>
+//SeqList <T>::~ SeqList()
+//{
+//	delete[] _data ;
+//}
+//template <>
+//class SeqList <int>
+//{
+//public :
+//	SeqList(int capacity);
+//	~ SeqList();
+//private :
+//	int _size ;
+//	int _capacity ;
+//	int* _data ;
+//};
+//// 特化后定义成员函数不再需要模板形参
+//SeqList <int>:: SeqList(int capacity)
+//	: _size(0)
+//	, _capacity(capacity )
+//	, _data(new int[ _capacity])
+//{
+//	cout<<"SeqList<int>" <<endl;
+//}
+//// 特化后定义成员函数不再需要模板形参
+//SeqList <int>::~ SeqList()
+//{
+//	delete[] _data ;
+//}
+//void test1 ()
+//{
+//	SeqList<double > sl2;
+//	SeqList<int > sl1(2);
+//}
+
+
+
+
+
+//#include "test.h"
+//
+//
+//
+//int main()
+//{
+//	A<int> a;
+//	a.fun();
+//	return 0;
+//}
