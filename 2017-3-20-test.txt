@@ -1,0 +1,291 @@
+#include <iostream>
+using namespace std;
+
+//#include <string>
+//
+//struct __TrueType
+//{
+//	static bool Get()
+//	{
+//		return true ;
+//	}
+//};
+//struct __FalseType
+//{
+//	static bool Get()
+//	{
+//		return false ;
+//	}
+//};
+//template <class _Tp>
+//struct TypeTraits
+//{
+//	typedef __FalseType __IsPODType;
+//};
+//template <>
+//struct TypeTraits<int>
+//{
+//	typedef __TrueType __IsPODType;
+//};
+//
+//template <class _Tp>
+//struct TypeTraits<_Tp*>
+//{
+//	typedef __TrueType __IsPODType;
+//};
+//
+//
+//template <class T>
+//void Copy (const T* src , T* dst, size_t size, __FalseType )
+//{
+//	cout<<"__FalseType:" <<typeid( T).name ()<<endl;
+//	for (size_t i = 0; i < size ; ++i)
+//	{
+//		dst[i ] = src[ i];
+//	}
+//}
+//
+//template <class T>
+//void Copy (const T* src , T* dst, size_t size, __TrueType )
+//{
+//	cout<<"__TrueType:" <<typeid( T).name ()<<endl;
+//	memcpy(dst , src, size*sizeof (T));
+//}
+//
+//template <class T>
+//void Copy (const T* src , T* dst, size_t size)
+//{
+//	cout<<"__TrueType:" <<typeid( T).name ()<<endl;
+//	if (TypeTraits <T>:: __IsPODType::Get ())
+//	{
+//		memcpy(dst , src, size*sizeof (T));
+//	}
+//	else
+//	{
+//		for (size_t i = 0; i < size ; ++i)
+//		{
+//			dst[i ] = src[ i];
+//		}
+//	}
+//}
+//void Test1()
+//{
+//	string s1[10] ={"1", "2", "3" , "4444444444444444444444444" };
+//	string s2[10] = {"11", "22", "33" };
+//	Copy(s1 , s2,10, TypeTraits <string>::__IsPODType());
+//	//Copy(s1 , s2, 10);
+//	int a1 [10] = {1,2,3};
+//	int a2 [10] = {0};
+//	Copy(a1 , a2,10, TypeTraits <int>:: __IsPODType());
+//	//Copy(a1 , a2, 10);
+//}
+//
+//int main()
+//{
+//	Test1();
+//	return 0;
+//}
+
+
+
+
+//template<typename T>
+//struct Less
+//{
+//public:
+//	bool operator()(const T& left,const T& right)
+//	{
+//		return left<right;
+//	}
+//};
+//
+//template<typename T>
+//struct Greate
+//{
+//public:
+//	bool operator()(T& left,T& right)
+//	{
+//		return left>right;
+//	}
+//};
+//
+//template<class T>
+//struct Compare
+//{
+//	typedef Greate<T> __IsPODType;
+//};
+
+
+
+
+//struct Less
+//{
+//	static bool Get()
+//	{
+//		return false;
+//	}
+//};
+//
+//struct Greate
+//{
+//	static bool Get()
+//	{
+//		return true;
+//	}
+//};
+//
+//template<class T>
+//struct Compare
+//{
+//	bool operator()(T& left,T& right)
+//	{
+//		if(left>right)
+//			return Greate::Get();
+//		else
+//			return Less::Get();
+//	}
+//};
+//
+//
+//
+//
+//template<typename T>
+//void BubbleSort(T* arr,int n)
+//{
+//	cout<<typeid(T).name()<<endl;
+//	for(int i=0;i<n-1;i++)
+//	{
+//		bool flag=false;
+//		for(int j=0;j<n-i-1;j++)
+//		{
+//			//if(Compare<T>::__IsPODType()(arr[j],arr[j+1]))
+//			if(Compare<T>()(arr[j],arr[j+1]))
+//			{
+//				flag=true;
+//				std::swap(arr[j],arr[j+1]);
+//			}
+//		}
+//	}
+//}
+//
+//
+//int main()
+//{
+//	int arr[]={1,22,6,99,100,33};
+//	BubbleSort(arr,sizeof(arr)/sizeof(arr[0]));
+//	for(int i=0;i<sizeof(arr)/sizeof(arr[0]);i++)
+//	{
+//		cout<<arr[i]<<" ";
+//	}
+//	cout<<endl;
+//	return 0;
+//}
+
+
+
+//struct student
+//{
+//	char name[20];
+//	int iAge;
+//	char cGender;
+//};
+//
+//struct A
+//{
+//	char a;
+//	int b;
+//	double c;
+//	char d;
+//};
+//
+//int main()
+//{
+//	cout<<sizeof(student)<<endl;
+//	cout<<sizeof(A)<<endl;
+//	return 0;
+//}
+
+
+
+//namespace NewSpace
+//{
+//	int iValue = 10;
+//}
+//
+//int iValue = 20;
+//
+//class CTest
+//{
+//public:
+//	void FunTest(int iValue)
+//	{
+//		iValue = iValue;
+//	}
+//	void Print()
+//	{
+//		cout<<iValue<<endl;
+//	}
+//private:
+//	int iValue;
+//};
+//int main()
+//{
+//	CTest test;
+//	test.FunTest(30);
+//	cout<<iValue<<endl;//20
+//	cout<<NewSpace::iValue<<endl;//10
+//	test.Print();//Ëæ»úÖµ
+//	system( "pause");
+//	return 0;
+//}
+
+
+
+
+//class A
+//{
+//	char ch ;
+//	double d ;
+//};//16
+//class B
+//{
+//	char ch1 ;
+//	A a ;
+//	char ch2 ;
+//};//32
+//
+//int main()
+//{
+//	cout<<sizeof(A)<<endl;
+//	cout<<sizeof(B)<<endl;
+//	return 0;
+//}
+
+
+
+class A
+{
+public:
+	void fun()
+	{
+		cout<<"A::fun()"<<endl;
+	}
+
+private:
+	int _a;
+};
+
+
+int main()
+{
+	//A a;
+	//a.fun();
+
+	int a=0;
+	int& ra=a;
+	const int& aa=0;
+
+	int&& rra=0;
+	int b=rra;
+	return 0;
+}
