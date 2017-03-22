@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define line 2
+#define row 2
+#define mine 3
+void menu()
+{
+	printf("****************************\n");
+	printf("1:开始游戏       0：结束游戏\n");
+	printf("****************************\n");
+}
+void Init(char arr[line+2][row+2])
+{
+	int i=0;
+	int j=0;
+	for(i=0;i<line+2;i++)
+	{
+		for(j=0;j<row+2;j++)
+		{
+			arr[i][j]='#';
+		}
+	}
+}
+void print_board(char arr[line+2][row+2])
+{
+	int i=0;
+	int j=0;
+	printf("   ");
+	for(j=0;j<row+2;j++)
+	{
+		printf("%2d ",j+1);
+	}
+	printf("\n");
+	for(i=0;i<line+2;i++)
+	{
+		printf("%2d ",i+1);
+		for(j=0;j<row+2;j++)
+		{
+			printf(" %c ",arr[i][j]);
+		}
+		printf("\n");
+	}
+}
+void creat_minefield(char arr[line+2][row+2])
+{
+	int x=0;
+	int y=0;
+	int count=mine;
+	srand((unsigned int)time(NULL));
+	while(count>0)
+	{
+		x=rand()%line+1;
+	    y=rand()%row+1;
+		if(arr[x][y]=='#')
+	    { 
+			arr[x][y]='*';
+		    count--;
+		}
+	}
+
+}
+
+void game(char arr[line+2][row+2],char brr[line+2][row+2])
+{
+	int x=0;
+	int y=0;
+	int count=0;
+	int z=0;
+	Init(arr);
+	Init(brr);
+	creat_minefield(arr);
+	print_board(brr);
+	while(z<((line+2)*(row+2)-mine))
+	{
+		count=0;
+		printf("请输入坐标： ");
+	    scanf("%d,%d",&x,&y);
+		x--;
+		y--;
+	    while((arr[x][y]=='*')&&(z==0))
+		{
+			Init(arr);
+			creat_minefield(arr);
+		}
+		
+	    if((arr[x][y]=='*')&&(z>0))
+		{
+			printf("GAME OVER\n");
+		    print_board(arr);
+			break;
+	    }
+		if(arr[x][y]=='#')
+	    {
+			if(arr[x][y-1]=='*')
+				count++;
+		    if(arr[x-1][y-1]=='*')
+			    count++;
+		    if(arr[x-1][y]=='*')
+			    count++;
+		    if(arr[x-1][y+1]=='*')
+			    count++;
+		    if(arr[x][y+1]=='*')
+			    count++;
+		    if(arr[x+1][y+1]=='*')
+			    count++;
+		    if(arr[x+1][y]=='*')
+			    count++;
+		    if(arr[x+1][y-1]=='*')
+			    count++;
+		    brr[x][y]=count+'0';
+			z++;
+		    print_board(brr);
+	    }
+	}
+	if(z==((line+2)*(row+2)-mine))
+		printf("恭喜你\n");
+
+}
+int main()
+{
+	char minefield[line+2][row+2];
+	char show[line+2][row+2];
+	int input=0;
+	do
+	{
+		menu();
+		printf("请选择：");
+		scanf("%d",&input);
+		switch(input)
+		{
+		case 1:game(minefield,show);break;
+		case 0:exit(0);break;
+		default:break;
+		}
+
+	}while(input);
+	return 0;
+}
