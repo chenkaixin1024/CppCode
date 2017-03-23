@@ -1,0 +1,575 @@
+------------------------------Í·ÎÄtest.h--------------------------------
+#ifndef __TEST_H__
+#define __TEST_H__
+
+
+#include <stdio.h>
+#include <assert.h>
+#include <windows.h>
+
+
+
+typedef int DataType;
+
+typedef struct Node
+{
+	struct Node* next;
+	DataType data;
+}Node, *PNode;
+
+void InitList(PNode* pHead);
+void PushBack(PNode* pHead, DataType data);
+void PopBack(PNode* pHead);
+void PushFront(PNode* pHead, DataType data);
+void PopFront(PNode* pHead);
+PNode Find(PNode pHead, DataType data);
+void Insert(PNode pos, DataType data);
+void Erase(PNode* pHead, PNode pos);
+void Remove(PNode* pHead, DataType data);
+void RemoveAll(PNode* pHead, DataType data);
+size_t Size(PNode pHead);
+PNode Front(PNode pHead);
+PNode Back(PNode pHead);
+int Empty(PNode pHead);
+void PrintList(PNode pHead);
+void PrintListFromTail2Head(PNode pHead);
+void DeleteNotTailNode(PNode pos);
+void InsertNotHeadNode(PNode pos, DataType data);
+
+////////////////////////////////////////////////////////////////////////////
+
+
+PNode JosephCircle(PNode pHead, size_t M);
+PNode ReverseList_P(PNode pHead);
+PNode ReverseList(PNode pHead);
+void BubbleSort(PNode pHead);
+PNode FindMidNode(PNode pHead);
+PNode FindLastKNode(PNode pHead, size_t K);
+PNode DeleteLastKNode(PNode pHead, size_t k);
+PNode MergeList(PNode pHead1, PNode pHead2);
+
+
+-----------------------test.cpp----------------------------------------
+
+
+#include "test.h"
+
+
+void InitList(PNode* pHead)
+{
+	*pHead=NULL;
+}
+
+static PNode NewNode(DataType data)
+{
+	PNode NNode=(PNode)malloc(sizeof(Node));
+	if(NNode)
+	{
+		NNode->data=data;
+		NNode->next=NULL;
+	}
+}
+
+void PushBack(PNode* pHead, DataType data)
+{
+	PNode pcur=NULL;
+	assert(pHead);
+
+	if(*pHead==NULL)
+	{
+		*pHead=NewNode(data);
+	}
+	else
+	{
+		pcur=*pHead;
+		while(pcur->next)
+		{
+			pcur=pcur->next;
+		}
+		pcur->next=NewNode(data);
+	}
+}
+
+void PopBack(PNode* pHead)
+{
+	PNode pcur=*pHead;
+	PNode pdel=NULL;
+	assert(pHead);
+
+	while(pcur->next->next)
+	{
+		pcur=pcur->next;
+	}
+	pdel=pcur->next;
+	pcur->next=NULL;
+	free(pdel);
+}
+
+void PushFront(PNode* pHead, DataType data)
+{
+	PNode pcur=*pHead;
+	assert(pHead);
+
+	*pHead=NewNode(data);
+	(*pHead)->next=pcur;
+}
+
+void PopFront(PNode* pHead)
+{
+	PNode pcur=*pHead;
+	assert(pHead);
+
+	if(*pHead==NULL)
+	{
+		return ;
+	}
+	
+	*pHead=pcur->next;
+	free(pcur);
+}
+
+PNode Find(PNode pHead, DataType data)
+{
+	PNode pcur=pHead;
+	assert(pHead);
+
+	while(pcur)
+	{
+		if(pcur->data==data)
+		{
+			return pcur;
+		}
+		pcur=pcur->next;
+	}
+	return NULL;
+}
+
+void Insert(PNode pos, DataType data)
+{
+	PNode pnew=NULL;
+	PNode pcur=pos->next;
+	if(pos==NULL)
+	{
+		return ;
+	}
+
+	pnew=NewNode(data);
+	pos->next=pnew;
+	pnew->next=pcur;
+
+
+}
+
+void Erase(PNode* pHead, PNode pos)
+{
+	PNode pcur=*pHead;
+	assert(pHead);
+
+	if(pos==NULL)
+	{
+		return ;
+	}
+
+	if(pos==*pHead)
+	{
+		*pHead=pos->next;
+	}
+	else
+	{
+		while(pcur->next!=pos)
+	    {
+			pcur=pcur->next;
+		}
+	    pcur->next=pos->next;
+	}
+	free(pos);
+}
+
+void Remove(PNode* pHead, DataType data)
+{
+	PNode pos=NULL;
+	assert(pHead);
+
+	if(*pHead==NULL)
+	{
+		return ;
+	}
+
+	else if((pos=Find(*pHead,data))==NULL)
+	{
+		return ;
+	}
+	else
+	{
+		Erase(pHead,pos);
+	}
+}
+
+void RemoveAll(PNode* pHead, DataType data)
+{
+	PNode ppre=NULL;
+	PNode pcur=NULL;
+	PNode pdel=NULL;
+	assert(pHead);
+
+	if(*pHead==NULL)
+	{
+		return ;
+	}
+	else
+	{
+		ppre=*pHead;
+		pcur=ppre->next;
+		while(pcur)
+		{
+			if(pcur->data==data)
+			{
+				ppre->next=pcur->next;
+				free(pcur);
+				pcur=ppre->next;
+			}
+			else
+			{
+				ppre=pcur;
+				pcur=pcur->next;
+			}
+		}
+		if((*pHead)->data==data)
+		{
+			pdel=*pHead;
+			*pHead=pdel->next;
+			free(pdel);
+		}
+	}
+}
+
+size_t Size(PNode pHead)
+{
+	PNode pcur=pHead;
+	size_t count=0;
+	while(pcur)
+	{
+		pcur=pcur->next;
+		count++;
+	}
+	return count;
+}
+
+PNode Front(PNode pHead)
+{
+	if(pHead==NULL)
+	{
+		return NULL;
+	}
+	else
+	{
+		return pHead;
+	}
+}
+
+PNode Back(PNode pHead)
+{
+	if(pHead==NULL)
+	{
+		return NULL;
+	}
+	else
+	{
+		PNode pcur=pHead;
+		while(pcur->next)
+		{
+			pcur=pcur->next;
+		}
+		return pcur;
+	}
+}
+
+int Empty(PNode pHead)
+{
+	if(pHead==NULL)
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void PrintList(PNode pHead)
+{
+	PNode pcur=pHead;
+	assert(pHead);
+
+	while(pcur)
+	{
+		printf("%d->",pcur->data);
+		pcur=pcur->next;
+	}
+
+	printf("NULL\n");
+}
+
+void PrintListFromTail2Head(PNode pHead)
+{
+
+	if(pHead)
+	{
+		PNode pcur=pHead;
+		pHead=pHead->next;
+		PrintListFromTail2Head(pHead);
+		printf("<-%d",pcur->data);
+	}
+	else
+	{
+		printf("NULL");
+	}
+}
+
+void DeleteNotTailNode(PNode pos)
+{
+	PNode pcur=NULL;
+	if(pos==NULL)
+	{
+		return ;
+	}
+
+	pos->data=pos->next->data;
+	pcur=pos->next;
+	pos->next=pcur->next;
+	free(pcur);
+}
+
+void InsertNotHeadNode(PNode pos, DataType data)
+{
+	PNode pnew=NULL;
+	if(pos==NULL)
+	{
+		return ;
+	}
+
+	pnew=NewNode(data);
+	pnew->next=pos->next;
+	pos->next=pnew;
+	(pos->data)^=(pnew->data);
+	(pnew->data)^=(pos->data);
+	(pos->data)^=(pnew->data);
+}
+
+
+
+/////////////////////////////////////////////////////////////////////////////////
+
+
+PNode JosephCircle(PNode pHead, size_t M)
+{
+	PNode Pend=NULL;
+	PNode pcur=pHead;
+	size_t count=0;
+	assert(pHead);
+
+	Pend=Back(pHead);
+	Pend->next=pHead;
+
+	while(pHead->next!=pHead)
+	{
+		count=0;
+		while(1)
+		{
+			count++;
+			if(count==M)
+			{
+				pcur->data=pcur->next->data;
+				pcur->next=pcur->next->next;
+				if(pcur==Pend)
+				{
+					pHead=pHead->next;
+				}
+				
+				break;
+			}
+			pcur=pcur->next;
+		}
+	}
+	return pHead;
+}
+
+PNode ReverseList_P(PNode pHead)
+{
+	PNode pNewHead;
+	PNode pcur=pHead;
+	PNode pnew=NULL;
+	PNode pend=NULL;
+	assert(pHead);
+
+	InitList(&pNewHead);
+	while(pcur)
+	{
+		pnew=pcur;
+		pend=pNewHead;
+		pNewHead=pnew;
+		pcur=pcur->next;
+		pnew->next=pend;
+	}
+	return pNewHead;
+}
+
+PNode ReverseList(PNode pHead)
+{
+	PNode ppre=pHead;
+	PNode pcur=NULL;
+	PNode tmp=NULL;
+	assert(pHead);
+	pcur=ppre->next;
+
+	ppre->next=NULL;
+	while(pcur)
+	{
+		tmp=pcur->next;
+		pcur->next=ppre;
+		ppre=pcur;
+		pcur=tmp;
+	}
+	
+	return ppre;
+
+}
+
+static void swap(PNode x,PNode y)
+{
+	DataType tmp=x->data;
+	x->data=y->data;
+	y->data=tmp;
+	
+}
+
+void BubbleSort(PNode pHead)
+{
+	PNode ppre=NULL;
+	PNode pcur=NULL;
+	size_t len=Size(pHead);
+	size_t i=0;
+	assert(pHead);
+
+	ppre=pHead;
+	pcur=ppre->next;
+	for(;len>0;len--)
+	{
+		ppre=pHead;
+		pcur=ppre->next;
+		for(i=0;i<len-1;i++)
+		{
+			if((ppre->data)>(pcur->data))
+			{
+				swap(ppre,pcur);
+				
+			}
+			ppre=pcur;
+			pcur=pcur->next;
+		}
+
+	}
+
+}
+
+PNode FindMidNode(PNode pHead)
+{
+	PNode fast=pHead;
+	PNode slow=pHead;
+	assert(pHead);
+
+	while(fast&&fast->next)
+	{
+		fast=fast->next->next;
+		slow=slow->next;
+	}
+
+	return slow;
+}
+
+PNode FindLastKNode(PNode pHead, size_t k)
+{
+	PNode fast=pHead;
+	PNode slow=pHead;
+	size_t step=0;
+	assert(pHead);
+
+	
+	while(fast)
+	{
+		if(step<k)
+		{
+			fast=fast->next;
+		}
+		else
+		{
+			fast=fast->next;
+			slow=slow->next;
+		}
+		step++;
+	}
+
+	if(step<k)
+	{
+		return NULL;
+	}
+	return slow;
+}
+
+PNode DeleteLastKNode(PNode pHead, size_t k)
+{
+	PNode pos=NULL;
+	assert(pHead);
+
+	pos=FindLastKNode(pHead,k);
+	Erase(&pHead,pos);
+
+	return pHead;
+}
+
+PNode MergeList(PNode pHead1, PNode pHead2)
+{
+	PNode pNewHead=NULL;
+	PNode pcur1=pHead1;
+	PNode pcur2=pHead2;
+	PNode pcur=NULL;
+	assert(pHead1);
+	assert(pHead2);
+
+	if(pcur1->data<pcur2->data)
+	{
+		pNewHead=pcur1;
+		pcur1=pcur1->next;
+	}
+	else
+	{
+		pNewHead=pcur2;
+		pcur2=pcur2->next;
+	}
+	pcur=pNewHead;
+
+	while(pcur1&&pcur2)
+	{
+		if(pcur1->data<pcur2->data)
+		{
+			pcur->next=pcur1;
+			pcur=pcur->next;
+			pcur1=pcur1->next;
+		}
+		else
+		{
+			pcur->next=pcur2;
+			pcur=pcur->next;
+			pcur2=pcur2->next;
+		}
+	}
+	if(pcur1==NULL)
+	{
+		pcur->next=pcur2;
+	}
+	else
+	{
+		pcur->next=pcur1;
+	}
+	return pNewHead;
+}
