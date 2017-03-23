@@ -1,0 +1,258 @@
+#include <stdio.h>
+#include <windows.h>
+#include <string.h>
+#include <malloc.h>
+int count=0;
+typedef struct person
+{
+	char name[20];
+	char sex[5];
+	char age[3];
+	char telephone[15];
+	char address[50];
+}str_p;
+
+void menu()
+{
+	printf("**********1.    添加联系人信息*****************\n");
+	printf("**********2.    删除指定联系人信息*************\n");
+	printf("**********3.    查找指定联系人信息*************\n");
+	printf("**********4.    修改指定联系人信息*************\n");
+	printf("**********5.    显示所有联系人信息*************\n");
+	printf("**********6.    清空所有联系人*****************\n");
+	printf("**********7.    以名字排序所有联系人***********\n");
+	printf("**********8.    写入通讯录*********************\n");
+	printf("**********9.    读取通讯录*********************\n");
+	printf("**********0.    退出***************************\n");
+}
+
+void show(str_p* p,str_p* q)
+{
+	for(;p<q;p++)
+	{
+		printf("name:");
+		puts(p->name);
+		printf("sex:");
+		puts(p->sex);
+		printf("age:");
+		puts(p->age);
+		printf("telephone:");
+		puts(p->telephone);
+		printf("address:");
+		puts(p->address);
+		printf("\n");
+	}
+}
+void add(str_p** p,str_p** h,int size,int* num)
+{
+	count=*num;
+	count++;
+	*num=count;
+	*h=(str_p*)realloc(*h,size*(count+1));
+	
+	printf("name:");
+	scanf("%s",(*h+count-1)->name);
+	printf("sex:");
+	scanf("%s",(*h+count-1)->sex);
+	printf("age:");
+	scanf("%s",(*h+count-1)->age);
+	printf("telephone:");
+	scanf("%s",(*h+count-1)->telephone);
+	printf("address:");
+	scanf("%s",(*h+count-1)->address);
+	
+	
+	*p=(*h+count);
+	
+	
+}
+void del(str_p* p,str_p** q)
+{
+	str_p* tmp=NULL;
+	
+	char arr[20];
+	
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<*q)
+	{
+		if(strcmp(arr,p->name)==0)
+		{
+			
+			tmp=p;
+			for(;tmp<*q-1;tmp++)
+			{
+				*tmp=*(tmp+1);
+
+			}
+			*q=tmp;
+			count--;
+			break;
+		}
+		p++;
+	}
+	if(tmp==NULL)
+	{
+		printf("no this name\n");
+	}
+}
+void find(str_p* p,str_p* q)
+{
+	char arr[20];
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<q)
+	{
+		if(strcmp(p->name,arr)==0)
+		{
+			printf("name:");
+			puts(p->name);
+			printf("sex:");
+			puts(p->sex);
+			printf("age:");
+			puts(p->age);
+			printf("telephone:");
+			puts(p->telephone);
+			printf("address:");
+			puts(p->address);
+			printf("\n");
+			break;
+		}
+		p++;
+	}
+	if(p==q)
+	{
+		printf("no this person\n");
+	}
+}
+void add_non(str_p* p)
+{
+	printf("name:");
+	scanf("%s",p->name);
+	printf("sex:");
+	scanf("%s",p->sex);
+	printf("age:");
+	scanf("%s",p->age);
+	printf("telephone:");
+	scanf("%s",p->telephone);
+	printf("address:");
+	scanf("%s",p->address);
+}
+void revise(str_p* p,str_p* q)
+{
+	char arr[20];
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<q)
+	{
+		if(strcmp(p->name,arr)==0)
+		{
+			printf("Please revise this person's information\n");
+			add_non(p);
+			break;
+		}
+		p++;
+	}
+	if(p==q)
+	{
+		printf("no this person\n");
+	}
+}
+void empty(str_p** p,str_p** q,int* tmp)
+{
+	
+	*q=*p;
+	*tmp=0;
+	
+}
+void swap(void* x,void* y,int size)
+{
+	char* a=(char*)x;
+	char* b=(char*)y;
+	while(a<(char*)x+size)
+	{
+		*a^=*b;
+		*b^=*a;
+		*a^=*b;
+		a++;
+		b++;
+	}
+}
+void sort(str_p* p,str_p* q)
+{
+	
+	while(p<q)
+	{
+		str_p* start=p;
+		int count=0;
+		while(start<q)
+		{
+			if(strcmp(start->name,(start+1)->name)>0)
+			{
+				count=1;
+				swap(start,start+1,sizeof(str_p));
+			}
+			
+			start++;
+		}
+		if(count==0)
+		{
+			break;
+		}
+		q--;
+	}
+}
+void write_file(str_p** h,int size)
+{
+	FILE* fp=fopen("contacts.txt","w");
+
+	fwrite(*h,size,count,fp);
+
+	fclose(fp);
+}
+void read_file(str_p** h,int size,str_p** p,int* num)
+{
+	FILE* fp=fopen("contacts.txt","r");
+	*num=0;
+	while(fread(*h+*num,size,1,fp))
+	{
+		(*num)++;
+		*h=(str_p*)realloc(*h,(*num+1)*size);
+		
+	}
+	
+	*p=(*h+*num);
+	fclose(fp);
+}
+int main()
+{
+	int size=sizeof(str_p);
+	str_p* h=(str_p*)malloc(size);
+	str_p* p=h;
+	int num=0;
+	int tmp=0;
+	
+
+	do{
+		menu();
+		printf("Please select:<0~7>:");
+		scanf("%d",&num);
+		switch(num)
+		{
+		case 1:add(&p,&h,size,&tmp);break;
+		case 2:del(h,&p);break;
+		case 3:find(h,p);break;
+		case 4:revise(h,p);break;
+		case 5:show(h,p);break;
+		case 6:empty(&h,&p,&tmp);break;
+		case 7:sort(h,p);break;
+		case 8:write_file(&h,size);break;
+		case 9:read_file(&h,size,&p,&tmp);break;
+		case 0:exit(0);break;
+		default:break;
+		}
+	}while(1);
+	free(h);
+	system("pause");
+	return 0;
+}

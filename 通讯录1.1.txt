@@ -1,0 +1,196 @@
+#include <stdio.h>
+#include <windows.h>
+#include <string.h>
+typedef struct person
+{
+	char name[20];
+	char sex[5];
+	char age[3];
+	char telephone[15];
+	char address[50];
+}str_p;
+
+void menu()
+{
+	printf("**********1.    添加联系人信息*****************\n");
+	printf("**********2.    删除指定联系人信息*************\n");
+	printf("**********3.    查找指定联系人信息*************\n");
+	printf("**********4.    修改指定联系人信息*************\n");
+	printf("**********5.    显示所有联系人信息*************\n");
+	printf("**********6.    清空所有联系人*****************\n");
+	printf("**********7.    以名字排序所有联系人***********\n");
+	printf("**********0.    退出***************************\n");
+}
+
+void show(str_p* p,str_p* q)
+{
+	for(;p<q;p++)
+	{
+		printf("name:");
+		puts(p->name);
+		printf("sex:");
+		puts(p->sex);
+		printf("age:");
+		puts(p->age);
+		printf("telephone:");
+		puts(p->telephone);
+		printf("address:");
+		puts(p->address);
+		printf("\n");
+	}
+}
+void add(str_p* p)
+{
+	
+	
+	printf("name:");
+	scanf("%s",p->name);
+	printf("sex:");
+	scanf("%s",p->sex);
+	printf("age:");
+	scanf("%s",p->age);
+	printf("telephone:");
+	scanf("%s",p->telephone);
+	printf("address:");
+	scanf("%s",p->address);
+	
+}
+void del(str_p* p,str_p* h)
+{
+	char arr[20];
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<h)
+	{
+		if(strcmp(arr,p->name)==0)
+		{
+			memset(p,0,sizeof(str_p));
+			break;
+		}
+		p++;
+	}
+	if(p==h)
+	{
+		printf("no this name\n");
+	}
+}
+void find(str_p* p,str_p* q)
+{
+	char arr[20];
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<q)
+	{
+		if(strcmp(p->name,arr)==0)
+		{
+			printf("name:");
+			puts(p->name);
+			printf("sex:");
+			puts(p->sex);
+			printf("age:");
+			puts(p->age);
+			printf("telephone:");
+			puts(p->telephone);
+			printf("address:");
+			puts(p->address);
+			printf("\n");
+			break;
+		}
+		p++;
+	}
+	if(p==q)
+	{
+		printf("no this person\n");
+	}
+}
+void revise(str_p* p,str_p* q)
+{
+	char arr[20];
+	printf("Please enter name:");
+	scanf("%s",arr);
+	while(p<q)
+	{
+		if(strcmp(p->name,arr)==0)
+		{
+			printf("Please revise this person's information\n");
+			add(p);
+			break;
+		}
+		p++;
+	}
+	if(p==q)
+	{
+		printf("no this person\n");
+	}
+}
+void empty(str_p* p,str_p* q)
+{
+	for(;p<q;p++)
+	{
+		memset(p,0,sizeof(str_p));
+	}
+}
+void swap(void* x,void* y,int size)
+{
+	char* a=(char*)x;
+	char* b=(char*)y;
+	while(a<(char*)x+size)
+	{
+		*a^=*b;
+		*b^=*a;
+		*a^=*b;
+		a++;
+		b++;
+	}
+}
+void sort(str_p* p,str_p* q)
+{
+	
+	while(p<q)
+	{
+		str_p* start=p;
+		int count=0;
+		while(start<q)
+		{
+			if(strcmp(start->name,(start+1)->name)>0)
+			{
+				count=1;
+				swap(start,start+1,sizeof(str_p));
+			}
+			
+			start++;
+		}
+		if(count==0)
+		{
+			break;
+		}
+		q--;
+	}
+}
+int main()
+{
+	str_p contacts[1000];
+	str_p* p=contacts;
+	int num=0;
+	
+
+	do{
+		menu();
+		printf("Please select:<0~7>");
+		scanf("%d",&num);
+		switch(num)
+		{
+		case 1:add(p);p++;break;
+		case 2:del(contacts,p);break;
+		case 3:find(contacts,p);break;
+		case 4:revise(contacts,p);break;
+		case 5:show(contacts,p);break;
+		case 6:empty(contacts,p);break;
+		case 7:sort(contacts,p);break;
+		case 0:exit(0);break;
+		default:break;
+		}
+	}while(1);
+	system("pause");
+	return 0;
+}
