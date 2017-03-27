@@ -1,0 +1,302 @@
+#include <iostream>
+using namespace std;
+
+//void FunTest()
+//{
+//	FILE* fp=fopen("1.txt","rb");
+//	int* p=new int;
+//	try
+//	{
+//		if(fp==NULL)
+//		{
+//			throw 1;
+//		}
+//	}
+//	catch(...)
+//	{
+//		delete p;
+//		throw;
+//	}
+//
+//}
+//
+//void FunTest1()throw()
+//{
+//	throw 'c';
+//}
+//
+//int main()
+//{
+//	try
+//	{
+//		//FunTest();
+//		FunTest1();
+//	}
+//	catch(int err)
+//	{
+//		cout<<"FunTest()"<<endl;
+//	}
+//	catch(char err)
+//	{
+//		cout<<"char"<<endl;
+//	}
+//	catch(...)
+//	{
+//		cout<<"未知异常"<<endl;
+//	}
+//	return 0;
+//}
+
+
+//#include <string>
+//
+//class Exception
+//{
+//public:
+//	Exception(int errID=0,string errMessage="")
+//		:_errID(errID)
+//		,_errMessage(errMessage)
+//	{}
+//
+//	virtual void what()const=0;
+//
+//	int _errID;
+//	string _errMessage;
+//};
+//
+//
+//class DBException:public Exception
+//{
+//public:
+//	DBException(int errID=0,string errMessage="")
+//		:Exception(errID,errMessage)
+//	{}
+//
+//	virtual void what()const
+//	{
+//		cout<<_errID<<":"<<_errMessage<<endl;
+//	}
+//
+//};
+//
+//
+//class NetException:public Exception
+//{
+//public:
+//	NetException(int errID,string errMessage)
+//		:Exception(errID,errMessage)
+//	{}
+//
+//	virtual void what()const
+//	{
+//		cout<<_errID<<":"<<_errMessage<<endl;
+//	}
+//};
+//
+//void funtest1()
+//{
+//	DBException d(1,"数据库错误");
+//	throw d;
+//}
+//
+//void funtest2()
+//{
+//	NetException n(2,"网络错误");
+//	throw n;
+//}
+//
+//int main()
+//{
+//	try
+//	{
+//		//funtest1();
+//		funtest2();
+//	}
+//	catch(Exception& err)
+//	{
+//		err.what();
+//	}
+//	catch(exception& err)
+//	{
+//		err.what();
+//	}
+//	catch(...)
+//	{
+//		cout<<"未知异常"<<endl;
+//	}
+//	return 0;
+//}
+
+//#include <time.h>
+//#include <windows.h>
+//
+//
+//
+//#ifdef _DEBUG
+//#define Time Test t;
+//#else
+//#define Time ;
+//#endif
+//
+//
+//
+//class Test
+//{
+//public:
+//	Test()
+//	{
+//		start_time=clock();
+//	}
+//
+//	~Test()
+//	{
+//		end_time=clock();
+//		cout<<(end_time-start_time)*CLOCKS_PER_SEC<<endl;
+//	}
+//	clock_t start_time;
+//	clock_t end_time;
+//};
+//
+//
+//void funtest()
+//{
+//	Test t;
+//	for(int i=0;i<10000000;i++)
+//		;
+//}
+//
+//int main()
+//{
+//	int start=GetTickCount();
+//	funtest();
+//	int end=GetTickCount();
+//	cout<<end-start<<endl;
+//	return 0;
+//}
+
+
+
+
+//template<class T>
+//class AutoPtr
+//{
+//public:
+//	AutoPtr(T* p)
+//		: _p(p)
+//	{
+//		cout<<"AutoPtr()"<<endl;
+//	}
+//
+//	~AutoPtr()
+//	{
+//		cout<<"~AutoPtr()"<<endl;
+//
+//		if(_p)
+//		{
+//			delete _p;
+//			_p = NULL;
+//		}
+//	}
+//protected:
+//	T* _p;
+//};
+//
+//void FunTest()
+//{
+//	int* p = new int;
+//	AutoPtr<int> ap(p);
+//}
+//
+//int main()
+//{
+//	FunTest();
+//	return 0;
+//}
+
+
+
+
+//void Test ()
+//{
+//// 以下代码没有匹配使用，会发生什么？有内存泄露吗？会崩溃吗？
+//	int* p4 = new int;
+//	int* p5 = new int(3);
+//	int* p6 = new int[3];
+//	int* p7 = (int*) malloc(sizeof (int));
+//	delete[] p4 ;
+//	//delete p5 ;
+//	free(p5 );
+//	delete p6 ;
+//	delete p7 ;
+//}
+//int main()
+//{
+//	Test();
+//	return 0;
+//}
+
+
+//
+//class Array
+//{
+//public :
+//	Array (size_t size = 10)
+//		: _size(size )
+//		, _a(0)
+//	{
+//		cout<<"Array(size_t size)" <<endl;
+//		if (_size > 0)
+//		{
+//			_a = new int[ size];
+//		}
+//	}
+//	~ Array()
+//	{
+//		cout<<"~Array()" <<endl;
+//		if (_a )
+//		{
+//			delete[] _a ;
+//			_a = 0;
+//			_size = 0;
+//		}
+//	}
+//private :
+//	int*_a ;
+//	size_t _size ;
+//};
+//void Test ()
+//{
+//	Array* p1 = (Array*) malloc(sizeof (Array));
+//	Array* p2 = new Array;
+//	Array* p3 = new Array(20);
+//	Array* p4 = new Array[10];
+//	free(p1 );
+//	delete p2 ;
+//	delete p3 ;
+//	delete[] p4 ;
+//}
+//
+//int main()
+//{
+//	Test();
+//	return 0;
+//}
+
+
+class A
+{
+public:
+	A(int a=0)
+		:_a(a)
+	{}
+
+private:
+	int _a;
+};
+
+int main()
+{
+	A* p=new A;
+	free(p);
+	return 0;
+}
