@@ -1,0 +1,159 @@
+--------------------------------convert.h------------------------------
+#ifndef __CONVERT__H__
+#define __CONVERT__H__
+
+#include <stdio.h>
+#include <windows.h>
+
+#define INPUT "input.c"
+#define OUTPUT "output.cpp"
+
+
+
+enum status{
+	NORMAL_STATUS,
+	C_STATUS,
+	CPP_STATUS,
+	END_STATUS,
+};
+
+
+
+extern enum status g_status;
+
+void StatusChange(FILE* in,FILE* out);
+
+
+
+
+#endif
+
+
+
+
+
+--------------------------fun.c----------------------------------------
+
+
+#include "convert.h"
+enum status g_status=NORMAL_STATUS;
+
+void C_CPP(FILE* in,FILE* out)
+{
+	char first=fgetc(in);
+	switch(first)
+	{
+	case '*':
+		{
+			char second=fgetc(in);
+			switch(second)
+			{
+			case '/':
+				{
+					char third=fgetc(in);
+					switch(third)
+					{
+					case '\n':
+						{
+							ungetc(third,in);
+							g_status=NORMAL_STATUS;
+						}break;
+					case EOF:
+						{
+							g_status=END_STATUS;
+						}break;
+					default:
+						{
+							fputc('\n',out);
+							ungetc(third,in);
+							g_status=NORMAL_STATUS;
+						}break;
+					}
+				}break;
+			
+			case EOF:
+				{
+					fputc(first,out);
+					g_status=END_STATUS;
+				}break;
+			default:
+				{
+					fputc(first,out);
+					fputc(second,out);
+				}break;
+			}
+		}break;
+	case '\n':
+		{
+			fputc(first,out);
+			fputc('/',out);
+			fputc('/',out);
+		}break;
+	case EOF:
+		{
+			g_status=END_STATUS;
+		}break;
+	default:
+		{
+			fputc(first,out);
+		}break;
+		
+
+		
+		
+	}
+}
+void doNORMAL(FILE* in,FILE* out)
+{
+	char first=fgetc(in);
+	switch(first)
+	{
+	case '/':
+		{
+			char second=fgetc(in);
+			switch(second)
+			{
+			case '*':
+				{
+					fputc('/',out);
+					fputc('/',out);
+					g_status=C_STATUS;
+				}break;
+			case EOF:
+				{
+					fputc(first,out);
+					g_status=END_STATUS;
+				}break;
+			case '/':
+				{
+					fputc('/',out);
+					fputc('/',out);
+					g_status=CPP_STATUS;
+				}
+			default:break;
+			}
+		}break;
+	case EOF:
+		{
+			g_status=END_STATUS;
+		}break;
+	default:
+		{
+			fputc(first,out);
+		}break;
+	}
+
+}
+void StatusChange(FILE* in,FILE* out)
+{
+	while(g_status!=END_STATUS)
+	{
+		switch(g_status)
+		{
+		case NORMAL_STATUS:doNORMAL(in,out);break;
+		case C_STATUS:C_CPP(in,out);break;
+		case CPP_STATUS:doNORMAL(in,out);break;
+		default:break;
+		}
+	}
+}
