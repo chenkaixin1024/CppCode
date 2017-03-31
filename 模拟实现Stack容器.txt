@@ -1,0 +1,320 @@
+------------------------------Vector.h----------------------------------
+#pragma once
+
+#include <iostream>
+using namespace std;
+
+#define RESIZE 5
+
+
+template<class T>
+class Vector
+{
+public:
+	typedef T ValueType;
+	typedef ValueType* Pointer;
+	typedef const ValueType* ConstPointer;
+	typedef ValueType* Iterator;
+	typedef const ValueType* ConstIterator;
+	typedef ValueType& Reference;
+	typedef const ValueType& ConstReference;
+	typedef size_t SizeType;
+
+
+public:
+	Vector()
+		: _start(0)
+		, _end(0)
+		, _endOfStorage(0)
+	{}
+
+	Vector(SizeType n, const T& value)
+	{
+		FillAndInit(n, value);
+	}
+
+	Vector(SizeType n)
+	{
+		FillAndInit(n, T());
+	}
+
+	Vector(const Vector<T>& v)
+	{
+		_start = new T[v.Capacity()];
+		_end = _start + v.Size();
+		_endOfStorage = _start + v.Capacity();
+
+		for (size_t idx = 0; idx < v.Size(); ++idx)
+			_start[idx] = v[idx];
+	}
+
+	Vector<T>& operator=(const Vector<T>& v)
+	{
+		if(this!=&v)
+		{
+			Iterator tmp=_start;
+			_start = new T[v.Capacity()];
+			_end = _start + v.Size();
+			_endOfStorage = _start + v.Capacity();
+			delete[] tmp;
+			
+			for (size_t idx = 0; idx < v.Size(); ++idx)
+				_start[idx] = v[idx];
+		}
+
+		return *this;
+	}
+	~Vector()
+	{
+		if(_start)
+		{
+			delete[] _start;
+			_start=0;
+			_end=0;
+			_endOfStorage=0;
+		}
+	}
+
+
+	/////////////////////Capacity//////////////////////
+	SizeType Capacity()const
+	{
+		return _endOfStorage-_start;
+	}
+	SizeType Size()const
+	{
+		return _end-_start;
+	}
+	SizeType MaxSize()const
+	{
+		return (SizeType)(-1)/sizeof(ValueType);
+	}
+	bool Empty()const
+	{
+		return _start==_end;
+	}
+
+        //////////////Acess/////////////////////
+	Reference operator[](size_t index)
+	{
+		return _start[index];
+	}
+	ConstReference operator[](size_t index)const
+	{
+		return _start[index];
+	}
+	Reference Front()
+	{
+		return *Begin();
+	}
+	ConstReference Front()const
+	{
+		return *Begin();
+	}
+	Reference Back()
+	{
+		return *(End()-1);
+	}
+	ConstReference Back()const
+	{
+		return *(End()-1);
+	}
+
+
+	/////////////Iterator//////////////////
+	Iterator Begin()
+	{
+		return _start;
+	}
+	ConstIterator Begin()const
+	{
+		return _start;
+	}
+	Iterator End()
+	{
+		return _end;
+	}
+	ConstIterator End()const
+	{
+		return _end;
+	}
+
+        //////////////Modify///////////////////
+	void PushBack(const T& value)
+	{
+		CheckCapacity();
+		*_end=value;
+		_end++;
+	}
+	void PopBack()
+	{
+		if(Empty())
+			return ;
+		_end--;
+	}
+
+	// 在position位置插入元素data
+	Iterator Insert(Iterator position, const T& data)
+	{
+		SizeType pos=position-_start;
+		CheckCapacity();
+		position=_start+pos;
+		SizeType index=_end-position;
+		for(;index>0;index--)
+		{
+			position[index]=position[index-1];
+		}
+
+		*position=data;
+		_end++;
+		return position;
+	}
+        
+        // 删除position位置的元素
+	Iterator Erase(Iterator position)
+	{
+		SizeType index=0;
+		for(;index<_end-position-1;index++)
+		{
+			position[index]=position[index+1];
+		}
+		_end--;
+		return position;
+	}
+protected:
+	void FillAndInit(SizeType n, const T& value)
+	{
+		SizeType index=0;
+		_start=new ValueType[n];
+		for(;index<n;index++)
+		{
+			_start[index]=value;
+		}
+		_end=_start+n;
+		_endOfStorage=_end;
+	}
+    void CheckCapacity()
+	{
+		if(_end==_endOfStorage)
+		{
+			SizeType size=_endOfStorage-_start;
+			SizeType index=0;
+			Iterator tmp=_start;
+			_start=new ValueType[size+RESIZE];
+			for(;index<size;index++)
+			{
+				_start[index]=tmp[index];
+			}
+			delete[] tmp;
+
+			_end=_start+size;
+			_endOfStorage=_end+RESIZE;
+		}
+	}
+protected:
+	Iterator _start;
+	Iterator _end;
+	Iterator _endOfStorage;
+
+};
+
+
+------------------------------test.cpp----------------------------------
+#include "Vector.h"
+#include <deque>
+
+
+//template<class T, class Con = Vector<T>>
+//class Stack
+//{
+//public:
+//	/*Stack()
+//	{
+//		Vector<T> _c;
+//	}*/
+//	void Push(const T& x)
+//	{
+//		_c.PushBack(x);
+//	}
+//	void Pop()
+//	{
+//		_c.PopBack();
+//	}
+//	T& Top()
+//	{
+//		return _c.Back();
+//	}
+//	const T& Top()const
+//	{
+//		return _c.Back();
+//	}
+//	bool Empty()const
+//	{
+//		return _c.Empty();
+//	}
+//	size_t Size()const
+//	{
+//		return _c.Size();
+//	}
+//
+//protected:
+//	Con _c;
+//};
+
+template<class T,template<class,class> class Con = deque>
+class Stack
+{
+public:
+	/*Stack()
+	{
+		Vector<T> _c;
+	}*/
+	void Push(const T& x)
+	{
+		_c.push_back(x);
+	}
+	void Pop()
+	{
+		_c.pop_back();
+	}
+	T& Top()
+	{
+		return _c.back();
+	}
+	const T& Top()const
+	{
+		return _c.back();
+	}
+	bool Empty()const
+	{
+		return _c.empty();
+	}
+	size_t Size()const
+	{
+		return _c.size();
+	}
+
+protected:
+	Con<T,allocator<T> > _c;
+};
+
+
+
+void funtest()
+{
+	Stack<int> s;
+	s.Push(1);
+	s.Push(2);
+	s.Push(3);
+	s.Push(4);
+	s.Push(5);
+	s.Pop();
+	cout<<s.Size()<<endl;
+	cout<<s.Top()<<endl;
+}
+
+int main()
+{
+	funtest();
+	return 0;
+}
