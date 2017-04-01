@@ -1,0 +1,562 @@
+--------------------------SharedPtr.h-----------------------------------
+#pragma once
+#include <memory>
+
+  #define _MT_INCR(mtx, x)	_InterlockedIncrement(&x)
+  #define _MT_DECR(mtx, x)	_InterlockedDecrement(&x)
+  #define _MT_CMPX(x, y, z)	_InterlockedCompareExchange(&x, y, z)
+
+class RefCountBase
+{
+private:
+	virtual void _Destroy() = 0;
+	virtual void _DeleteThis() = 0;
+
+	long _Uses;
+	long _Weaks;
+
+protected:
+	RefCountBase()
+		: _Uses(1)
+		, _Weaks(1)
+	{}
+
+public:
+	virtual ~RefCountBase()
+	{}
+
+	// 如果usecount不为0时，增加usecount的引用计数，成功返回true
+	bool _Incref_nz()
+	{
+		// 循环知道增加成功
+		for (; ; )
+		{	// loop until state is known
+			long _Count = (volatile long&)_Uses;
+			if (_Count == 0)
+				return (false);
+			if (_MT_CMPX(_Uses, _Count + 1, _Count) == _Count)
+				return (true);
+		}
+	}
+
+	// 增加usecount
+	void _Incref()
+	{
+		_MT_INCR(_Mtx, _Uses);
+	}
+
+	// 增加weakcount引用计数
+	void _Incwref()
+	{
+		_MT_INCR(_Mtx, _Weaks);
+	}
+
+	// 减少usecount引用计数
+	void _Decref()
+	{	// 减少usecount引用计数，如果usecount减后为0，释放资源
+		if (_MT_DECR(_Mtx, _Uses) == 0)
+		{
+			//释放管理的资源，减少weakcount引用计数
+			_Destroy();
+			_Decwref();
+		}
+	}
+
+	// 减少weakcount的引用计数
+	void _Decwref()
+	{
+		if (_MT_DECR(_Mtx, _Weaks) == 0)
+			_DeleteThis();
+	}
+
+	// 获取usecount
+	long _Use_count()const
+	{
+		return (_Uses);
+	}
+
+	bool _Expired() const
+	{
+		return (_Uses == 0);
+	}
+
+	virtual void *_Get_deleter(const _XSTD2 type_info&) const
+	{
+		return (0);
+	}
+};
+
+template<class T>
+class RefCount: public RefCountBase
+{
+public:
+	RefCount(T* p)
+		: RefCountBase()
+		, _p(p)
+	{}
+
+private:
+	// 释放管理的资源
+	virtual void _Destroy()
+	{
+		delete _p;
+	}
+
+	// 释放自身
+	virtual void _DeleteThis()
+	{
+		delete this;
+	}
+
+	T * _p;
+};
+
+template<class T,class Del>
+class RefCountDel: public RefCountBase
+{
+public:
+	RefCountDel(T *p, Del Dtor)
+		: RefCountBase()
+		, _p(p)
+		, _Dtor(Dtor)
+	{}
+
+	virtual void *_Get_deleter(const _XSTD2 type_info& _Type) const
+	{	// return address of deleter object
+		return ((void *)(_Type == typeid(Del) ? &_Dtor : 0));
+	}
+
+private:
+	// 释放管理的资源
+	virtual void _Destroy()
+	{
+		_Dtor(_p);
+	}
+
+	virtual void _DeleteThis()
+	{
+		delete this;
+	}
+
+	T * _p;
+	Del _Dtor;
+};
+
+//定制空间配置器
+template<class T,class Del,class Alloc>
+class RefCountDelAlloc: public RefCountBase
+{
+public:
+	typedef RefCountDelAlloc<T, Del, Alloc> _Myty;
+	typedef typename Alloc::template rebind<_Myty>::other _Myalty;
+
+	RefCountDelAlloc(T* p, Del Dtor, _Myalty _Al)
+		: RefCountBase()
+		, _p(p)
+		, _Dtor(Dtor)
+		, _Myal(_Al)
+	{}
+
+	virtual void *_Get_deleter(const _XSTD2 type_info& _Type) const
+	{
+		return ((void *)(_Type == typeid(Del) ? &_Dtor : 0));
+	}
+
+private:
+	// 释放管理的资源
+	virtual void _Destroy()
+	{
+		_Dtor(_p);
+	}
+
+	// 释放自身
+	virtual void _DeleteThis()
+	{	// destroy self
+		_Myalty _Al = _Myal;
+		_Dest_val(_Al, this);
+		_Al.deallocate(this, 1);
+	}
+
+	T * _p;
+	Del _Dtor;	// the stored destructor for the controlled object
+	_Myalty _Myal;	// the stored allocator for this
+};
+
+// DECLARATIONS
+template<class T>
+class WeakPtr;
+template<class T>
+class SharedPtr;
+
+// SharedPtr和WeakPtr的基类
+template<class T>
+class PtrBase
+{
+public:
+	typedef PtrBase<T> _Myt;
+	typedef T Elem;
+	typedef Elem ElementType;
+
+	PtrBase()
+		: _ptr(0)
+		, _pRef(0)
+	{}
+
+	PtrBase(_Myt&& _Right)
+		: _ptr(0)
+		, _pRef(0)
+	{
+		_Assign_rv(_STD forward<_Myt>(_Right));
+	}
+
+	// construct _Ptr_base object that takes resource from _Right
+	_Myt& operator=(_Myt&& _Right)
+	{	
+		_Assign_rv(_STD forward<_Myt>(_Right));
+		return (*this);
+	}
+
+	// assign by moving _Right
+	void _Assign_rv(_Myt&& _Right)
+	{
+		if (this != &_Right)
+			_Swap(_Right);
+	}
+
+	// 获取引用计数
+	long UseCount() const
+	{	// return use count
+		return (_pRef ? _pRef->_Use_count() : 0);
+	}
+
+	void _Swap(PtrBase& _Right)
+	{
+		std::swap(_pRef, _Right._pRef);
+		std::swap(_ptr, _Right._ptr);
+	}
+
+	void* GetDeleter(const _XSTD2 type_info& _Type) const
+	{	
+		return (_pRef ? _pRef->_Get_deleter(_Type) : 0);
+	}
+
+	T* _Get() const
+	{
+		return (_ptr);
+	}
+
+	bool Expired() const
+	{
+		return (!_pRef || _pRef->_Expired());
+	}
+
+	// 增加引用计数usecount
+	void _Decref()
+	{
+		if (_pRef != 0)
+			_pRef->_Decref();
+	}
+
+	void _Reset()
+	{
+		_Reset(0, 0);
+	}
+
+	template<class Ty>
+	void _Reset(const PtrBase<Ty>& pb)
+	{
+		_Reset(pb._ptr, pb._pRef);
+	}
+
+	template<class Ty>
+	void _Reset(Ty *Ptr, const PtrBase<Ty>& pb)
+	{
+		_Reset(Ptr, pb._pRef);
+	}
+
+	void _Reset(T* ptr, RefCountBase* pRef)
+	{
+		if (pRef)
+			pRef->_Incref();
+		_Reset0(ptr, pRef);
+	}
+
+	void _Reset0(T* ptr, RefCountBase *pRef)
+	{
+		if (_pRef != 0)
+			_pRef->_Decref();
+		_pRef = pRef;
+		_ptr = ptr;
+	}
+
+	void _Decwref()
+	{
+		if (_pRef != 0)
+			_pRef->_Decwref();
+	}
+
+	void _Resetw()
+	{
+		_Resetw((_Elem *)0, 0);
+	}
+
+	template<class Ty>
+	void _Resetw(const PtrBase<Ty>& pb)
+	{
+		_Resetw(pb._ptr, pb._pRef);
+	}
+
+	template<class Ty>
+	void _Resetw(const Ty* ptr, RefCountBase* pRef)
+	{
+		_Resetw(const_cast<Ty*>(ptr), pRef);
+	}
+
+	template<class Ty>
+	void _Resetw(Ty* ptr, RefCountBase* pRef)
+	{
+		if (pRef)
+			pRef->_Incwref();
+		if (_pRef != 0)
+			_pRef->_Decwref();
+		_pRef = pRef;
+		_ptr = ptr;
+	}
+
+private:
+	T *_ptr;
+	RefCountBase *_pRef;
+};
+
+template<class T>
+class SharedPtr: public PtrBase<T>
+{
+public:
+	typedef SharedPtr<T> _Myt;
+	typedef PtrBase<T> _Mybase;
+
+	SharedPtr()
+	{}
+
+	explicit SharedPtr(T* p)
+	{
+		_Resetp(p);
+	}
+
+	// 带有删除器的构造函数
+	template<class U,class Del>
+	SharedPtr(U *p, Del Dt)
+	{
+		_Resetp(p, Dt);
+	}
+
+	// 带有空间配置器的构造函数
+	template<class U,class D,class Alloc>
+	SharedPtr(U *p, D Dt, Alloc Ax)
+	{
+		_Resetp(p, Dt, Ax);
+	}
+
+	SharedPtr(const _Myt& _Other)
+	{
+		this->_Reset(_Other);
+	}
+
+	template<class Ty>
+	explicit SharedPtr(const WeakPtr<Ty>& _Other,bool _Throw = true)
+	{
+		this->_Reset(_Other, _Throw);
+	}
+
+	template<class Ty>
+	explicit SharedPtr(const WeakPtr<Ty>& _Other)
+	{
+		this->_Reset(_Other, _Throw);
+	}
+
+
+	~SharedPtr()
+	{
+		this->_Decref();
+	}
+
+	_Myt& operator=(const _Myt& _Right)
+	{
+		SharedPtr(_Right).Swap(*this);
+		return (*this);
+	}
+
+	void Reset()
+	{
+		SharedPtr().swap(*this);
+	}
+
+	template<class U>
+	void Reset(U* p)
+	{
+		SharedPtr(p).swap(*this);
+	}
+
+	template<class U,class Del>
+	void Reset(U* p, Del Dt)
+	{
+		SharedPtr(p, Dt).swap(*this);
+	}
+
+	template<class U,class D,class _Alloc>
+	void Reset(U *P, D Del, _Alloc _Ax)
+	{
+		SharedPtr(P, Del, _Ax).swap(*this);
+	}
+
+	void Swap(_Myt& sp)
+	{
+		this->_Swap(sp);
+	}
+
+	T* Get() const
+	{
+		return (this->_Get());
+	}
+
+	T& operator*() const
+	{
+		return (*this->_Get());
+	}
+
+	T* operator->() const
+	{
+		return (this->_Get());
+	}
+
+	bool Unique() const
+	{
+		return (this->use_count() == 1);
+	}
+
+private:
+	template<class U>
+	void _Resetp(U* p)
+	{
+		_Resetp0(p, new RefCount<U>(p));
+	}
+
+	template<class U,class D>
+	void _Resetp(U *p, D Del)
+	{
+		_Resetp0(p, new RefCountDel<U, D>(p, Del));
+	}
+
+public:
+	template<class U>
+	void _Resetp0(U* p, RefCountBase* pRef)
+	{
+		this->_Reset0(p, pRef);
+	}
+};
+
+template<class T>
+void Swap(SharedPtr<T>& _Left,SharedPtr<T>& _Right)
+{
+	_Left.swap(_Right);
+}
+
+template<class D,class T>
+D* GetDeleter(const SharedPtr<T>& _Sx)
+{
+	return ((D *)_Sx._Get_deleter(typeid(D)));
+}
+
+template<class T>
+class WeakPtr: public PtrBase<T>
+{
+public:
+	WeakPtr()
+	{}
+
+	WeakPtr(const WeakPtr& wp)
+	{
+		this->_Resetw(wp);
+	}
+
+	~WeakPtr()
+	{
+		this->_Decwref();
+	}
+
+	WeakPtr& operator=(const WeakPtr& wp)
+	{
+		this->_Resetw(wp);
+		return (*this);
+	}
+
+	WeakPtr& operator=(SharedPtr<T>& sp)
+	{
+		this->_Resetw(sp);
+		return (*this);
+	}
+
+	void Reset()
+	{
+		this->_Resetw();
+	}
+
+	void Swap(WeakPtr& _Other)
+	{
+		this->_Swap(_Other);
+	}
+
+	bool Expired() const
+	{
+		return (this->_Expired());
+	}
+};
+
+
+
+--------------------------test.cpp--------------------------------------
+#include <iostream>
+using namespace std;
+
+//#include <memory>
+//#include "SharedPtr.h"
+//
+////template<class T>
+//struct Node
+//{
+//	Node(int va)
+//		:value(va)
+//		
+//	{
+//		cout<<"Node()"<<endl;
+//	}
+//
+//
+//	~Node()
+//	{
+//		cout<<"~Node()"<<endl;
+//	}
+//	WeakPtr<Node> _pre;
+//	WeakPtr<Node> _next;
+//	int value;
+//};
+//
+//void funtest()
+//{
+//	SharedPtr<Node> sp1(new Node(1));
+//	SharedPtr<Node> sp2(new Node(2));
+//
+//	sp1->_next=sp2;
+//	sp2->_pre=sp1;
+//}
+//
+//void fun()
+//{
+//	SharedPtr<int> sp(new int(1));
+//}
+//int main()
+//{
+//	//fun();
+//	funtest();
+//	return 0;
+//}
