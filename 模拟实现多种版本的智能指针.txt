@@ -1,0 +1,444 @@
+#include <iostream>
+using namespace std;
+
+//1
+
+//template<class T>
+//class AutoPtr
+//{
+//public:
+//	AutoPtr(T* ptr=NULL)
+//		:_ptr(ptr)
+//	{}
+//
+//	AutoPtr(AutoPtr& ap)
+//	{
+//		_ptr=ap._ptr;
+//		ap._ptr=NULL;
+//	}
+//
+//	AutoPtr& operator=(AutoPtr& ap)
+//	{
+//		if(this!=&ap)
+//		{
+//			_ptr=ap._ptr;
+//			ap._ptr=NULL;
+//		}
+//
+//		return *this;
+//	}
+//
+//	T* operator->()
+//	{
+//		return _ptr;
+//	}
+//
+//	T& operator*()
+//	{
+//		return *_ptr;
+//	}
+//
+//	~AutoPtr()
+//	{
+//		if(_ptr)
+//		{
+//			delete _ptr;
+//			_ptr=NULL;
+//		}
+//	}
+//
+//private:
+//	T* _ptr;
+//};
+
+
+//2
+//template<class T>
+//class AutoPtr
+//{
+//public:
+//	AutoPtr(T* ptr=NULL)
+//		:_ptr(ptr)
+//		,owner(true)
+//	{}
+//
+//	AutoPtr(const AutoPtr& ap)
+//	{
+//		_ptr=ap._ptr;
+//		owner=true;
+//		ap.owner=false;
+//	}
+//
+//	AutoPtr& operator=(const AutoPtr& ap)
+//	{
+//		if(this!=&ap)
+//		{
+//			_ptr=ap._ptr;
+//			ap.owner=false;
+//		}
+//
+//		return *this;
+//	}
+//
+//	T* operator->()
+//	{
+//		return _ptr;
+//	}
+//
+//	T& operator*()
+//	{
+//		return *_ptr;
+//	}
+//
+//	~AutoPtr()
+//	{
+//		if(_ptr&&owner)
+//		{
+//			delete _ptr;
+//			_ptr=NULL;
+//		}
+//	}
+//
+//private:
+//	T* _ptr;
+//	mutable bool owner;
+//};
+
+
+
+//3
+
+//template<class T>
+//class AutoPtrRef
+//{
+//	explicit AutoPtrRef(T* ptr)
+//		:_ptr(ptr)
+//	{}
+//
+//	T* _ptr;
+//};
+//
+//template<class T>
+//class AutoPtr
+//{
+//public:
+//	AutoPtr(T* ptr=NULL)
+//		:_ptr(ptr)
+//	{}
+//
+//	AutoPtr(AutoPtr& ap)
+//	{
+//		_ptr=ap._ptr;
+//		ap._ptr=NULL;
+//	}
+//
+//	AutoPtr(AutoPtrRef<T>& ap)
+//	{
+//		_ptr=ap._ptr;
+//		ap._ptr=NULL;
+//	}
+//
+//	AutoPtr& operator=(AutoPtr& ap)
+//	{
+//		if(this!=&ap)
+//		{
+//			_ptr=ap._ptr;
+//			ap._ptr=NULL;
+//		}
+//
+//		return *this;
+//	}
+//
+//	AutoPtr& operator=( AutoPtrRef<T>& ap)
+//	{
+//		if(this!=&ap)
+//		{
+//			_ptr=ap._ptr;
+//			ap._ptr=NULL;
+//		}
+//
+//		return *this;
+//	}
+//
+//	operator AutoPtr<T>()const
+//	{
+//		return *this;
+//	}
+//
+//	operator AutoPtrRef<T>()const
+//	{
+//		AutoPtrRef<T> tmp(_ptr);
+//		_ptr=NULL;
+//		return tmp;
+//	}
+//
+//	T* operator->()
+//	{
+//		return _ptr;
+//	}
+//
+//	T& operator*()
+//	{
+//		return *_ptr;
+//	}
+//
+//	~AutoPtr()
+//	{
+//		if(_ptr)
+//		{
+//			delete _ptr;
+//			_ptr=NULL;
+//		}
+//	}
+//
+//private:
+//	T* _ptr;
+//};
+//
+//
+//AutoPtr<int> Fun()
+//{
+//	int* p=new int(1);
+//	AutoPtr<int> ap(p);
+//	return ap;
+//}
+//
+//
+//
+//void funtest()
+//{
+//	int* p=new int(0);
+//	AutoPtr<int> ap(p);
+//	AutoPtr<int> ap1(ap);
+//	AutoPtr<int> ap2;
+//	ap2=ap1;
+//	cout<<*ap2<<endl;
+//	//cout<<*ap1<<endl;
+//	//cout<<*ap<<endl;
+//
+//	AutoPtr<int> ap3(AutoPtr<int>());
+//	AutoPtr<int> ap4(Fun());
+//	
+//}
+//
+//#include <memory>
+//
+//int main()
+//{
+//	//funtest();
+//
+//	int* p=new int(0);
+//	auto_ptr<int> ap(p);
+//	return 0;
+//}
+
+
+//ScopedPtr
+
+//template<class T>
+//class ScopedPtr
+//{
+//public:
+//	ScopedPtr(T* ptr=NULL)
+//		:_ptr(ptr)
+//	{}
+//
+//	T* operator->()
+//	{
+//		return _ptr;
+//	}
+//
+//	T& operator*()
+//	{
+//		return *_ptr;
+//	}
+//
+//
+//	~ScopedPtr()
+//	{
+//		if(_ptr)
+//		{
+//			delete _ptr;
+//			_ptr=NULL;
+//		}
+//	}
+//
+//private:
+//	ScopedPtr(ScopedPtr& sp);
+//
+//	ScopedPtr& operator=(ScopedPtr& sp);
+//
+//
+//private:
+//	T* _ptr;
+//};
+
+//ScopedArray”Îstd::vector
+//#include <vector>
+//
+//template<class T>
+//class ScopedArray
+//{
+//public:
+//	ScopedArray(T* ptr=NULL)
+//		:_ptr(ptr)
+//	{}
+//
+//	T& operator[](size_t index)
+//	{
+//		return _ptr[index];
+//	}
+//
+//	~ScopedArray()
+//	{
+//		if(_ptr)
+//		{
+//			delete[] _ptr;
+//			_ptr=NULL;
+//		}
+//	}
+//
+//private:
+//	ScopedArray(ScopedArray& sp);
+//
+//	ScopedArray& operator=(ScopedArray& sp);
+//
+//
+//private:
+//	T* _ptr;
+//};
+//
+//void funtest()
+//{
+//	int* p=new int[10];
+//	//vector<int> v();
+//	ScopedArray<int> sp(p);
+//	sp[0]=0;
+//	sp[1]=1;
+//	//cout<<*sp<<endl;
+//	//ScopedArray<int> sp1(sp);
+//	ScopedArray<int> sp1;
+//	//sp1=sp;
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+
+
+
+
+//SharedPtr(≈‰÷√…æ≥˝∆˜)
+
+//template<class T>
+//class Dele
+//{
+//public:
+//	void operator()(T* ptr)
+//	{
+//		delete ptr;
+//		ptr=NULL;
+//	}
+//};
+//
+//
+//template<class T>
+//class Free
+//{
+//public:
+//	void operator()(T* ptr)
+//	{
+//		free(ptr);
+//		ptr=NULL;
+//	}
+//};
+//
+//
+//template<class T>
+//class File
+//{
+//public:
+//	void operator()(T* ptr)
+//	{
+//		fclose(ptr);
+//	}
+//};
+//
+//template<class T,class Des=Dele<T>>
+//class SharedPtr
+//{
+//public:
+//	SharedPtr(T* ptr=NULL)
+//		:_ptr(ptr)
+//		,count(0)
+//	{
+//		if(_ptr)
+//		{
+//			count=new int(1);
+//		}
+//	}
+//
+//	SharedPtr(const SharedPtr& sp)
+//	{
+//		_ptr=sp._ptr;
+//		count=sp.count;
+//		(*count)++;
+//	}
+//
+//	SharedPtr& operator=(const SharedPtr& sp)
+//	{
+//		if(this!=&sp)
+//		{
+//			if(_ptr&&!(--*count))
+//			{
+//				Destory();
+//			}
+//			_ptr=sp._ptr;
+//			count=sp.count;
+//			(*count)++;
+//		}
+//		return *this;
+//	}
+//
+//	~SharedPtr()
+//	{
+//		if(_ptr&&!(--(*count)))
+//		{
+//			Destory();
+//		}
+//	}
+//	
+//private:
+//	void Destory()
+//	{
+//		Des()(_ptr);
+//		delete count;
+//	}
+//
+//private:
+//	T* _ptr;
+//	int* count;
+//};
+//
+//
+//void funtest()
+//{
+//	int* p1=new int;
+//	SharedPtr<int> sp1(p1);
+//
+//
+//	int* p2=(int*)malloc(sizeof(int));
+//	SharedPtr<int,Free<int> > sp2(p2);
+//
+//	FILE* fp=fopen("i.txt","rb");
+//	SharedPtr<FILE,File<FILE> > sp3(fp);
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
