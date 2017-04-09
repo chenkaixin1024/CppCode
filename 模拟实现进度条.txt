@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <unistd.h>
+
+
+int main()
+{
+	int i = 0;
+	char str[102];
+	char buf[5]="\\|/-";
+
+	while(i<=100)
+	{
+		str[i]='#';
+		str[i+1]=0;
+		printf("[%-100s][%d%%][%c]\r",str,i,buf[i%4]);
+
+		fflush(stdout);
+
+		usleep(100000);
+
+		i++;
+	}
+
+	printf("\n");
+	return 0;
+}
