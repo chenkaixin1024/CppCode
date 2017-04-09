@@ -1,0 +1,113 @@
+#include <iostream>
+using namespace std;
+
+//class A
+//{
+//public:
+//	~A()
+//	{
+//		delete this;//delete中调用析构函数，造成无限递归循环
+//	}
+//};
+//
+//
+//void funtest()
+//{
+//	A a;
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+//int main() 
+//{
+//	int a;
+//	cin>>a;
+//
+//	return 0;
+//}
+
+
+
+//#include <stdio.h>
+//
+//int main()
+//{
+//	cout<<printf("%s","hello world")<<endl;
+//	cout<<printf("%d\n",4321)<<endl;
+//	return 0;
+//}
+
+
+//int main()
+//{
+//	int i;
+//	cin>>i;
+//	cout<<cin.fail()<<endl;
+//	return 0;
+//}
+
+
+
+//int main()
+//{
+//	int i=0;
+//	int a=0;
+//	int b=0;
+//	cin>>i;
+//	cin>>a;
+//	fflush(stdin);//C++11中是清空不了的（Linux下实现不了对应功能，可移植性差，不建议使用）
+//	cin>>b;
+//
+//	cout<<a<<" "<<b<<" "<<endl;
+//	return 0;
+//}
+
+//#include <fstream>
+//
+//void WriteFile (const char* fileName )
+//{
+//// 1.打开文件
+//	ofstream ofs(fileName,ofstream::out );
+//// 2.写入文件
+//	string buf ("hello\n");
+//	ofs.write (buf. c_str(), buf .length());
+//	ofs.put ('w');
+//	ofs.put ('o');
+//	ofs.put ('r');
+//	ofs.put ('l');
+//	ofs.put ('d');
+//	ofs.close ();
+//}
+//
+//
+//void ReadFile (const char* fileName )
+//{
+//// 1.打开文件
+//	ifstream ifs (fileName);
+//// 2.一个字符一个字符读取文件
+//	char c ;
+//	cout<<"get:" ;
+//	while (ifs .get( c))
+//	cout << c ;
+//	cout<<endl ;
+//	ifs.close ();
+//// 3.一行一行读取文件
+//	char buf [256];
+//	ifs.open (fileName, ifstream::in );
+//	ifs.seekg (ifs. beg);
+//	ifs.getline (buf, 256);
+//	cout<<"GetLine:" <<buf<< endl;
+//	ifs.getline (buf, 256);
+//	cout<<buf <<endl;
+//}
+//
+//int main()
+//{
+//	WriteFile("1.txt");
+//	ReadFile("1.txt");
+//	return 0;
+//}
