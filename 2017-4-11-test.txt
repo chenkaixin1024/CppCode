@@ -1,0 +1,854 @@
+#include <iostream>
+using namespace std;
+
+//class A
+//{
+//public:
+//	A(int a=0)
+//		:_a(a)
+//	{}
+//
+//	void funtest1()
+//	{
+//		cout<<"A::funtest1()"<<endl;
+//	}
+//
+//	void funtest2()
+//	{
+//		cout<<"A::funtest2()"<<endl;
+//	}
+//
+//
+//	int _a;
+//};
+//
+//class B:virtual public A
+//{
+//public:
+//	B(int b=0)
+//		:_b(b)
+//	{}
+//
+//	void funtest3()
+//	{
+//		cout<<"B::funtest3()"<<endl;
+//	}
+//
+//	void funtest4()
+//	{
+//		cout<<"B::funtest4()"<<endl;
+//	}
+//
+//
+//	int _b;
+//};
+//
+//
+//void Fun()
+//{
+//	A a;
+//	a._a=1;
+//	B b;
+//	b._a=2;
+//	b._b=3;
+//}
+//
+//int main()
+//{
+//	Fun();
+//	return 0;
+//}
+
+
+
+//class Base
+//{
+//public:
+//	void funtest1()
+//	{
+//		cout<<"Base::funtest1()"<<endl;
+//	}
+//
+//	int _b1;
+//	int _b2;
+//};
+//
+//class C1:virtual public Base
+//{
+//public:
+//	void funtest2()
+//	{
+//		cout<<"C1::funtest2()"<<endl;
+//	}
+//
+//	int _c1;
+//};
+//
+//class C2:virtual public Base
+//{
+//public:
+//	void funtest3()
+//	{
+//		cout<<"C2::funtest3()"<<endl;
+//	}
+//
+//	int _c2;
+//};
+//
+//class D:public C1,public C2
+//{
+//public:
+//	void funtest()
+//	{
+//		cout<<"D::funtest()"<<endl;
+//	}
+//
+//	int _d1;
+//	int _d2;
+//};
+//
+//
+//void Fun()
+//{
+//	Base b;
+//	b._b1=1;
+//	b._b2=2;
+//
+//	C1 c1;
+//	c1._b1=1;
+//	c1._b2=2;
+//	c1._c1=3;
+//
+//	D d;
+//	d._b1=1;
+//	d._b2=2;
+//	d._c1=3;
+//	d._c2=4;
+//	d._d1=5;
+//	d._d2=6;
+//}
+//
+//int main()
+//{
+//	Fun();
+//	return 0;
+//}
+
+
+
+//class A
+//{
+//public:
+//	void funtest()
+//	{
+//		cout<<"A::funtest()"<<endl;
+//	}
+//};
+//
+//class B:public A
+//{
+//public:
+//	int funtest(int a)
+//	{
+//		cout<<"B::funtest()"<<endl;
+//		return 1;
+//	}
+//};
+//
+//
+//void Fun()
+//{
+//	B b;
+//	b.funtest(2);
+//	b.A::funtest();
+//}
+//
+//int main()
+//{
+//	Fun();
+//	return 0;
+//}
+
+
+//class A
+//{
+//public:
+//	A()
+//	{}
+//
+//	~A()
+//	{}
+//
+//	int _a;
+//};
+//
+//class B:virtual public A
+//{
+//public:
+//	B()
+//	{}
+//
+//	~B()
+//	{}
+//	int _b;
+//};
+//
+//void Fun()
+//{
+//	B b;
+//	b._a=1;
+//	b._b=2;
+//	cout<<sizeof(B)<<endl;
+//}
+//
+//int main()
+//{
+//	Fun();
+//	return 0;
+//}
+
+
+
+//class B
+//{
+//public:
+//     B()
+//     {}
+//     virtual void FunTest1()
+//     {
+//          cout << "B::FunTest1()" << endl;
+//     }
+//     int _b;
+//     /*virtual ~B()
+//     {
+//          cout << "B::FunTest1()" << endl;
+//     }*/
+//};
+//class C1 :virtual public  B
+//{
+//public:
+//     C1()
+//     {}
+//     virtual void FunTest1()//重写B
+//     {
+//          cout << "C1::FunTest1()" << endl;
+//     }
+//     virtual void FunTest2()//新加的虚函数
+//     {
+//          cout << "C1::FunTest2()" << endl;
+//     }
+//     int _c1;
+//     /*virtual ~C1()
+//     {
+//          cout << "C1::~C1()" << endl;
+//     }*/
+//};
+//class C2 :virtual public B
+//{
+//public:
+//     C2()
+//     {}
+//     virtual void FunTest1()//重写B中虚函数
+//     {
+//          cout << "C2::FunTest1()" << endl;
+//     }
+//     virtual void FunTest3()//新加虚函数
+//     {
+//          cout << "C2::FunTest3()" << endl;
+//     }
+//     int _c2;
+//     /*virtual ~C2()
+//     {
+//          cout << "C2::C2()" << endl;
+//     }*/
+//};
+//class D :public C1, public C2
+//{
+//public:
+//     D()
+//     {}
+//     virtual void FunTest1()//重写C1和C2中的虚函数
+//     {
+//          cout << "D::FunTest1()" << endl;
+//     }
+//     virtual void FunTest2()//重写C1中的虚函数
+//     {
+//          cout << "D::FunTest2()" << endl;
+//     }
+//     virtual void FunTest3()//重写C2中的虚函数
+//     {
+//          cout << "D::FunTest3()" << endl;
+//     }
+//     int _d;
+//     /*virtual ~D()
+//     {
+//          cout << "D::~D()" << endl;
+//     }*/
+//};
+//typedef void(*Pfun)();
+//void Print_Vir_Tab(Pfun* pPfun)
+//{
+//     while (*pPfun)
+//     {
+//          (*pPfun)();
+//          pPfun = (Pfun*)((int*)pPfun + 1);
+//     }
+//}
+//void Test1()
+//{
+//     D d;
+//     d._b = 1;
+//     d._c1 = 2;
+//     d._c2 = 3;
+//     d._d = 4;
+//     Print_Vir_Tab((Pfun*)*(int*)&d);
+//     cout << "-----------------" << endl;
+//     Print_Vir_Tab((Pfun*)*((int*)&d + 3));
+//     cout << "--------------------" << endl;
+//     Print_Vir_Tab((Pfun*)*((int*)&d + 8));
+//     cout << sizeof(d) << endl;
+//}
+//
+//
+//void Test()
+//{
+//	D d;
+//	cout<<sizeof(d)<<endl;
+//}
+//int main()
+//{
+//     Test();
+//     return 0;
+//}
+
+
+//class A
+//{
+//protected:
+//	int _a;
+//
+//};
+//
+//struct B: A
+//{
+//	void fun()
+//	{
+//		_a=1;
+//	}
+//	int _b;
+//};
+//class C:public B
+//{
+//public:
+//	void fun()
+//	{
+//		_a=1;
+//	}
+//};
+//
+//int main()
+//{
+//	B b;
+//	b._b=1;
+//	//b._a=1;
+//	C c;
+//	//c._a=1;
+//	return 0;
+//}
+
+
+
+
+
+//class A
+//{
+//public:
+//	/*A(int a=0)
+//		:_a(a)
+//	{}*/
+//
+//	virtual void funtest1()
+//	{
+//		cout<<"A::funtest1()"<<endl;
+//	}
+//
+//	virtual void funtest2()
+//	{
+//		cout<<"A::funtest2()"<<endl;
+//	}
+//
+//
+//	int _a;
+//};
+//
+//class B: public A
+//{
+//public:
+//	/*B(int b=0)
+//		:_b(b)
+//	{}*/
+//
+//	virtual void funtest3()
+//	{
+//		cout<<"B::funtest3()"<<endl;
+//	}
+//
+//	void funtest1()
+//	{
+//		cout<<"B::funtest1()"<<endl;
+//	}
+//
+//	virtual void funtest4()
+//	{
+//		cout<<"B::funtest4()"<<endl;
+//	}
+//
+//	int _b;
+//};
+//
+//void Fun()
+//{
+//	A a;
+//	A* p=&a;
+//	a._a=1;
+//	p->funtest1();
+//	p->funtest2();
+//	
+//
+//	B b;
+//	//p=&b;
+//	b._a=1;
+//	b._b=2;
+//	p->funtest1();
+//	p->funtest2();
+//
+//	b.funtest3();
+//	b.funtest4();
+//
+//	B* pb=&b;
+//	pb=static_cast<B*>(p);
+//	pb->funtest1();
+//	pb->funtest2();
+//	pb->funtest3();
+//	pb->funtest4();
+//
+//
+//	/*int a1=0;
+//	int b1=0;
+//	int& rra=a1;
+//	rra=b1;*/
+//}
+//
+//int main()
+//{
+//	Fun();
+//	return 0;
+//}
+
+
+
+
+//class A
+//{
+//public:
+//	void funtest1()
+//	{}
+//};
+//
+//class B1:public A
+//{
+//public:
+//	void funtest2()
+//	{}
+//};
+//
+//class B2:public A
+//{
+//public:
+//	void funtest3()
+//	{}
+//};
+//
+//class C:public B1,public B2
+//{
+//public:
+//	void funtest4()
+//	{}
+//};
+//
+//int main()
+//{
+//	C c;
+//	c.B1::funtest1();
+//	c.B2::funtest1();
+//	return 0;
+//}
+
+
+
+
+//class A  
+//{  
+//public:  
+//    virtual void fun1()  
+//    {  
+//        cout<<"A::fun1()"<<endl;  
+//    }  
+//  
+//    int _a;  
+//};  
+//  
+//class B1:virtual public A  
+//{  
+//public:  
+//    virtual void fun1()  
+//    {  
+//        cout<<"B1::fun1()"<<endl;  
+//    }  
+//    virtual void fun2()  
+//    {  
+//        cout<<"B1::fun2()"<<endl;  
+//    }  
+//  
+//    int _b1;  
+//};  
+//  
+//class B2:virtual public A  
+//{  
+//public:  
+//    virtual void fun1()  
+//    {  
+//        cout<<"B2::fun1()"<<endl;  
+//    }  
+//    virtual void fun3()  
+//    {  
+//        cout<<"B2::fun3()"<<endl;  
+//    }  
+//    virtual void fun4()  
+//    {  
+//        cout<<"B2::fun4()"<<endl;  
+//    }  
+//  
+//    int _b2;  
+//};  
+//  
+//class C:public B1,public B2  
+//{  
+//public:  
+//    virtual void fun0()  
+//    {  
+//        cout<<"C::fun0()"<<endl;  
+//    }  
+//    virtual void fun1()  
+//    {  
+//        cout<<"C::fun1()"<<endl;  
+//    }  
+//    virtual void fun2()  
+//    {  
+//        cout<<"C::fun2()"<<endl;  
+//    }  
+//    virtual void fun4()  
+//    {  
+//        cout<<"C::fun4()"<<endl;  
+//    }  
+//      
+//    int _c;  
+//};
+//
+//typedef void (*pfun)();
+//
+//void funtest()
+//{
+//	C c;
+//
+//	cout<<"B1:"<<endl;
+//	B1& rb1=c;
+//	pfun* pFun=(pfun*)((*((int*)(&rb1))));
+//
+//	while(*pFun)
+//	{
+//		(*pFun)();
+//		pFun=(pfun*)((int*)pFun+1);
+//	}
+//
+//
+//	cout<<"B2:"<<endl;
+//	B2& rb2=c;
+//	pFun=(pfun*)((*((int*)(&rb2))));
+//
+//	while(*pFun)
+//	{
+//		(*pFun)();
+//		pFun=(pfun*)((int*)pFun+1);
+//	}
+//
+//	cout<<"A:"<<endl;
+//	A& ra=c;
+//	pFun=(pfun*)(*((int*)(&ra)));
+//
+//	while(*pFun)
+//	{
+//		(*pFun)();
+//		pFun=(pfun*)((int*)pFun+1);
+//	}
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+
+
+class A
+{
+public:
+	A()
+	{}
+
+	virtual void funtest1()
+	{
+		cout<<"A::funtest1()"<<endl;
+	}
+
+	~A()
+	{}
+
+	int _a;
+};
+
+class B:virtual public A
+{
+public:
+	
+
+	virtual void funtest1()
+	{
+		cout<<"B::funtest1()"<<endl;
+	}
+
+
+	virtual void funtest2()
+	{
+		cout<<"B::funtest2()"<<endl;
+	}
+
+	~B()
+	{}
+
+	int _b;
+};
+
+typedef void (*pfun)();
+int main()
+{
+	B b;
+	cout<<"A:"<<endl;
+	A& ra=b;
+	pfun* pFun=(pfun*)(*((int*)(&ra)));
+
+	while(*pFun)
+	{
+		(*pFun)();
+		pFun=(pfun*)((int*)pFun+1);
+	}
+
+
+	cout<<"B:"<<endl;
+	B& r=b;
+	pFun=(pfun*)(*((int*)(&r)));
+
+	while(*pFun)
+	{
+		(*pFun)();
+		pFun=(pfun*)((int*)pFun+1);
+	}
+	cout<<sizeof(b)<<endl;
+	return 0;
+}
+
+
+
+//class A
+//{
+//public:
+//
+//
+//	virtual void funtest1()
+//	{
+//		cout<<"A"<<endl;
+//	}
+//
+//	int _a;
+//};
+//
+//class B1:virtual public A
+//{
+//public:
+//
+//
+//	virtual void funtest1()
+//	{
+//		cout<<"B1"<<endl;
+//	}
+//
+//	int _b1;
+//};
+//
+//class B2:virtual public A
+//{
+//public:
+//
+//
+//	virtual void funtest1()
+//	{
+//		cout<<"B2"<<endl;
+//	}
+//
+//	int _b2;
+//};
+//
+//class C:public B1,public B2
+//{
+//public:
+//	/*C()
+//	{}*/
+//
+//	virtual void funtest1()
+//	{
+//		cout<<"C"<<endl;
+//	}
+//
+//	int _c;
+//};
+//
+//int main()
+//{
+//	C c;
+//	c._a=1;
+//	c._b1=2;
+//	c._b2=3;
+//	c._c=4;
+//	c.funtest1();
+//	cout<<sizeof(c)<<endl;
+//	return 0;
+//}
+//
+//
+//class A
+//{
+//public:
+//	virtual void funtest1()
+//	{
+//		cout<<"A::funtest()"<<endl;
+//	}
+//
+//	int _a;
+//};
+//
+//class B:virtual public A
+//{
+//public:
+//	virtual void funtest1()
+//	{
+//		cout<<"B::funtest1()"<<endl;
+//	}
+//
+//	int _b;
+//};
+//
+//int main()
+//{
+//	B b;
+//	b._a=1;
+//	b._b=2;
+//	b.funtest1();
+//
+//	A a;
+//	A* pa=&a;
+//	pa->funtest1();
+//
+//	pa=&b;
+//	pa->funtest1();
+//	return 0;
+//}
+
+
+/*
+class A  
+{  
+public:  
+    virtual void fun1()  
+    {  
+        cout<<"A::fun1()"<<endl;  
+    }  
+  
+    int _a;  
+};  
+  
+class B1:virtual public A  
+{  
+public:  
+    virtual void fun1()  
+    {  
+        cout<<"B1::fun1()"<<endl;  
+    }  
+    virtual void fun2()  
+    {  
+        cout<<"B1::fun2()"<<endl;  
+    }  
+  
+    int _b1;  
+};  
+  
+class B2:virtual public A  
+{  
+public:  
+    virtual void fun1()  
+    {  
+        cout<<"B2::fun1()"<<endl;  
+    }  
+    virtual void fun3()  
+    {  
+        cout<<"B2::fun3()"<<endl;  
+    }  
+    virtual void fun4()  
+    {  
+        cout<<"B2::fun4()"<<endl;  
+    }  
+  
+    int _b2;  
+};  
+  
+class C:public B1,public B2  
+{  
+public:  
+    virtual void fun0()  
+    {  
+        cout<<"C::fun0()"<<endl;  
+    }  
+    virtual void fun1()  
+    {  
+        cout<<"C::fun1()"<<endl;  
+    }  
+    virtual void fun2()  
+    {  
+        cout<<"C::fun2()"<<endl;  
+    }  
+    virtual void fun4()  
+    {  
+        cout<<"C::fun4()"<<endl;  
+    }  
+      
+    int _c;  
+};  
+int main()  
+{  
+    C c;  
+    c._a=1;  
+    c._b1=2;  
+    c._b2=3;  
+    c._c=4;  
+    return 0;  
+}*/ 
