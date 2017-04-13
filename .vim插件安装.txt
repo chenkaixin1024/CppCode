@@ -1,0 +1,28 @@
+配置文件的位置:在目录 /etc/ 下面，有个名为vimrc的文件，这是系统中公共的vim配置文件，对所有用户都有效。而在每个用户的主目录下，都可以自己建立私有的配置文件，命名为：“.vimrc”。例如，/root目录下，通常已经存在一
+个.vimrc文件。
+1. 切换自己的登陆名称 su XXX 输入密码即可
+2. 设置语法高亮
+syntax on
+3. 显示行号
+set nu
+4. 设置缩进的空格数为4
+set shiftwidth=4
+5. 安装TagList 插件
+http://www.vim.org/scripts/script.php?script_id=273
+下载taglist_xx.zip ,解压完成，将解压出来的doc的内容放到～/.vim/doc, 将
+解压出来的plugin下的内容拷贝到～/.vim/plugin
+6. 在～/.vimrc 中添加：
+let Tlist_Show_One_File=1
+let Tlist_Exit_OnlyWindow=1
+let Tlist_Use_Right_Window=1
+7. 安装文件浏览器和窗口管理器 -- 插件: WinManager
+http://www.vim.org/scripts/script.php?script_id=95
+下载winmanager.zip，2.X版本以上的。
+解压winmanager.zip，将解压出来的doc的内容放到～/.vim/doc, 将解压出来
+的plugin下的内容拷贝到～/.vim/plugin
+8. 在～/.vimrc 中添加：
+let g:winManagerWindowLayout=‘FileExplorer|TagList'
+nmap wm :WMToggle<cr>
+9. 然后重启vim, 打开~/XXX.c或～/XXX.cpp, 在normal状态下输?入"wm", 你将
+看到效果。
+更具体移步：http://blog.csdn.net/wooin/article/details/1858917
