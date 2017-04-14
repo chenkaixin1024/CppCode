@@ -1,0 +1,245 @@
+#include <iostream>
+using namespace std;
+#include <assert.h>
+
+//int BinarySearch(int* arr,int size,int data)
+//{
+//	assert(arr);
+//	int left=0;
+//	int right=size;//size-1//size
+//	int mid=0;
+//
+//	while(left<right)//left<=right//left<right
+//	{
+//		mid=(left&right)+((left^right)>>1);
+//		if(arr[mid]==data)
+//		{
+//			return mid;
+//		}
+//		else if(arr[mid]>data)
+//		{
+//			right=mid-1;//mid-1//mid
+//		}
+//		else
+//		{
+//			left=mid+1;//mid+1//mid+1
+//		}
+//	}
+//
+//	return -1;
+//	
+//}
+
+
+//int BinarySearch(int* arr,int size,int data)
+//{
+//	assert(arr);
+//	int left=0;
+//	int right=size-1;
+//	int mid=0;
+//
+//	mid = (left + right) / 2;
+//    while (right > left)
+//    {
+//        if (arr[mid] > data)
+//            right = mid;
+//        else
+//            left = mid + 1;
+//        
+//        mid = (left + right) / 2;
+//    }
+//
+//	return mid;
+//	
+//}
+
+
+//int BinarySearch(int* arr,int left,int right,int data)
+//{
+//	assert(arr);
+//
+//	if(left<=right)
+//	{
+//		int mid=(left&right)+((left^right)>>1);
+//		if(arr[mid]==data)
+//			return mid;
+//		else if(arr[mid]>data)
+//		{
+//			BinarySearch(arr,left,mid-1,data);
+//		}
+//		else
+//		{
+//			BinarySearch(arr,mid+1,right,data);
+//		}
+//	}
+//	else
+//	{
+//		return -1;
+//	}
+//}
+
+
+
+//int BinarySearch(int * array, int length, int key)
+//{
+//    if(!array)
+//        return -1;
+//    int left = 0, right = length,mid;
+//    while(left <= right)
+//    {
+//        mid = left + (right-left)/2;
+//        if(array[mid] < key)
+//        {
+//            left = mid + 1;
+//        }else if(array[mid] > key)
+//        {
+//            right = mid - 1;
+//        }else
+//            return mid;
+//    }
+//    return -1;
+//}
+
+
+//
+//int BinarySearch(int* arr,int size,int data)
+//{
+//	assert(arr);
+//	int left=0;
+//	int right=size;//size-1//size
+//	int mid=0;
+//
+//	while(left<=right)//left<=right//left<right
+//	{
+//		mid=(left&right)+((left^right)>>1);
+//		if(arr[mid]==data)
+//		{
+//			return mid;
+//		}
+//		else if(arr[mid]>data)
+//		{
+//			right=mid;
+//		}
+//		else
+//		{
+//			left=mid+1;
+//		}
+//	}
+//
+//	return -1;
+//	
+//}
+
+
+
+//int BinarySearch(int* arr,int size,int data)
+//{
+//	assert(arr);
+//
+//	int left=0;
+//	int right=size-1;
+//	int mid=0;
+//
+//	while(left<=right)
+//	{
+//		mid=(left&right)+((left^right)>>1);
+//		if(arr[mid]==data)
+//		{
+//			return mid;
+//		}
+//		else if(arr[mid]>data)
+//		{
+//			right=mid-1;
+//		}
+//		else
+//		{
+//			left=mid+1;
+//		}
+//	}
+//	return -1;
+//}
+
+
+//int main()
+//{
+//	int arr[]={1,2,3,4,5};
+//
+//	cout<<BinarySearch(arr,5,5)<<endl;
+//	cout<<BinarySearch(arr,5,5)<<endl;
+//	cout<<BinarySearch(arr,5,6)<<endl;
+//	cout<<BinarySearch(arr,5,0)<<endl;
+//	//cout<<BinarySearch(arr,0,8,-1)<<endl;
+//
+//	int brr[]={1,2,3};
+//	cout<<BinarySearch(brr,3,-1)<<endl;
+//	//cout<<BinarySearch(brr,0,2,-1)<<endl;
+//
+//	return 0;
+//}
+
+
+
+
+//
+//int BSearchUpperBound(int array[], int low, int high, int target)
+//{
+//    //Array is empty or target is larger than any every element in array 
+//    if(low > high || target >= array[high]) return -1;
+//    
+//    int mid = (low + high) / 2;
+//    while (high > low)
+//    {
+//        if (array[mid] > target)
+//            high = mid;
+//        else
+//            low = mid + 1;
+//        
+//        mid = (low + high) / 2;
+//    }
+//
+//    return mid;
+//}
+//
+//
+//int main()
+//{
+//	int arr[]={1,2,3,4,5,6,7,8,9};
+//
+//	cout<<BSearchUpperBound(arr,0,8,3)<<endl;
+//	return 0;
+//}
+
+
+
+
+int Bi_Search1(int a[],int n,int b)//大于b的第一个数  
+{  
+    if(n<=0)  
+        return -1;  
+    int last = -1;  
+    int low = 0;  
+    int high = n-1;  
+    while (low<=high)  
+    {  
+        int mid = low +(high - low)/2;  
+        if(a[mid]>b)  
+        {  
+            last = mid;  
+            high = mid -1;  
+        }  
+        else if (a[mid]<=b)  
+        {  
+            low =mid +1;  
+        }  
+    }  
+  
+    return last;  
+}
+
+
+int main()
+{
+	int arr[]={1,2,3,4,5};
+	cout<<Bi_Search1(arr,5,2)<<endl;
+	return 0;
+}
