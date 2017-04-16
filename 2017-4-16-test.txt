@@ -1,0 +1,84 @@
+#include <iostream>
+using namespace std;
+#include <assert.h>
+
+//int BinarySearch(int* arr,int size,int data)
+//{
+//	assert(arr);
+//
+//	int left=0;
+//	int right=size;
+//	int mid=0;
+//
+//	while(left<right)
+//	{
+//		mid=(left&right)+((left^right)>>1);
+//		if(arr[mid]==data)
+//			return mid;
+//		else if(arr[mid]>data)
+//		{
+//			right=mid;
+//		}
+//		else
+//		{
+//			left=mid+1;
+//		}
+//	}
+//
+//	return -1;
+//}
+//
+//int Fib(int n)
+//{
+//	if(n<3)
+//		return 1;
+//
+//	int ret=0;
+//	int first=1;
+//	int second=1;
+//	size_t count=0;
+//
+//	for(int i=2;i<n;i++)
+//	{
+//		ret=first+second;
+//		first=second;
+//		second=ret;
+//		count++;
+//	}
+//	cout<<count<<endl;
+//	return ret;
+//}
+//
+////int Fib(int n)
+////{
+////	if(n<3)
+////		return 1;
+////
+////	return Fib(n-2)+Fib(n-1);
+////}
+//
+//int main()
+//{
+//	cout<<Fib(50)<<endl;
+//	return 0;
+//}
+
+
+
+
+int Fib(int n,int first,int second)
+{
+	if(n<3)
+		return 1;
+
+	if(n==3)
+		return first+second;
+	return Fib(n-1,second,first+second);
+}
+
+
+int main()
+{
+	cout<<Fib(5,1,1)<<endl;
+	return 0;
+}
