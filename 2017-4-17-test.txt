@@ -1,0 +1,188 @@
+#include <iostream>
+using namespace std;
+
+struct Pos
+{
+	Pos(int Row,int Col)
+		:_Row(Row)
+		,_Col(Col)
+	{}
+
+	int _Row;
+	int _Col;
+};
+
+
+class Map
+{
+public:
+	Map(int Row,int Col)
+		:_Row(Row)
+		,_Col(Col)
+		,_pMap(0)
+	{
+		_pMap=new int*[Row];
+		for(int i=0;i<Col;i++)
+		{
+			_pMap[i]=new int[Col];
+		}
+	}
+
+
+	void InitMap();
+	bool IsPass(int Row,int Col);
+	bool PassMap(Pos s);
+	void PrintMap();
+
+
+	~Map()
+	{
+		if(_pMap)
+		{
+			for(int i=0;i<_Col;i++)
+			{
+				delete[] _pMap[i];
+				_pMap[i]=NULL;
+			}
+			delete[] _pMap;
+			_pMap=NULL;
+		}
+	}
+
+	int _Row;
+	int _Col;
+	int** _pMap;
+};
+
+
+
+void Map::InitMap()
+{
+	FILE *fp=fopen("Map.txt","r");
+	if(NULL==fp)
+		return ;
+
+	
+	for(int i=0;i<_Row;i++)
+	{
+		for(int j=0;j<_Col;j++)
+		{
+			char str=fgetc(fp);
+			_pMap[i][j]=str-'0';
+		}
+	}
+
+
+	fclose(fp);
+
+}
+
+
+bool Map::IsPass(int Row,int Col)
+{
+	if(Row>=_Row||Row<0||Col>=_Col||Col<0)
+		return false;
+
+	if(_pMap[Row][Col]==1)
+		return true;
+	else
+		return false;
+}
+
+bool Map::PassMap(Pos s)
+{
+	if(s._Row>=_Row||s._Row<=0||s._Col>=_Col||s._Col<=0)
+	{
+		_pMap[s._Row][s._Col]=2;
+		return true;
+	}
+
+	if(_pMap[s._Row][s._Col]==1||_pMap[s._Row][s._Col]==2)
+	{
+		_pMap[s._Row][s._Col]=2;
+		if(IsPass(s._Row-1,s._Col))
+		{
+			Pos sNext(s._Row-1,s._Col);
+			return PassMap(sNext);
+		}
+		if(IsPass(s._Row+1,s._Col))
+		{
+			Pos sNext(s._Row+1,s._Col);
+			return PassMap(sNext);
+		}
+		if(IsPass(s._Row,s._Col+1))
+		{
+			Pos sNext(s._Row,s._Col+1);
+			return PassMap(sNext);
+		}
+		if(IsPass(s._Row,s._Col-1))
+		{
+			Pos sNext(s._Row,s._Col-1);
+			return PassMap(sNext);
+		}
+		
+
+		_pMap[s._Row][s._Col]=3;
+		return PassMap(s);
+
+	}
+	if(_pMap[s._Row][s._Col]==3)
+	{
+		if(_pMap[s._Row-1][s._Col]==2)
+		{
+			Pos sNext(s._Row-1,s._Col);
+			return PassMap(sNext);
+		}
+		if(_pMap[s._Row][s._Col-1]==2)
+		{
+			Pos sNext(s._Row,s._Col-1);
+			return PassMap(sNext);
+		}
+		if(_pMap[s._Row][s._Col+1]==2)
+		{
+			Pos sNext(s._Row,s._Col+1);
+			return PassMap(sNext);
+		}
+		if(_pMap[s._Row+1][s._Col]==2)
+		{
+			Pos sNext(s._Row+1,s._Col);
+			return PassMap(sNext);
+		}
+	}
+
+
+	return false;
+}
+
+void Map::PrintMap()
+{
+	for(int i=0;i<_Row;i++)
+	{
+		for(int j=0;j<_Col;j++)
+		{
+			cout<<_pMap[i][j]<<" ";
+		}
+		cout<<endl;
+	}
+	cout<<endl;
+}
+
+
+void funtest()
+{
+	Map map(10,10);
+	map.InitMap();
+	map.PrintMap();
+	Pos s(9,6);
+
+	if(map.PassMap(s))
+	{
+		map.PrintMap();
+	}
+}
+
+int main()
+{
+	funtest();
+	return 0;
+}
