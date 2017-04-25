@@ -1,0 +1,400 @@
+#include <iostream>
+using namespace std;
+
+
+bool isSwap(int* arr,int n,int i)
+{
+	for(int index=n;index<i;++index)
+	{
+		if(arr[index]==arr[i])
+			return false;
+	}
+	return true;
+}
+
+void Perm(int* arr,int size,int n)
+{
+	if(n<size)
+	{
+		for(int i=n;i<size;++i)
+		{
+			if(isSwap(arr,n,i))
+			{
+				swap(arr[n],arr[i]);
+				Perm(arr,size,n+1);
+				swap(arr[n],arr[i]);
+			}
+		}
+	}
+	else
+	{
+		for(int i=0;i<size;++i)
+		{
+			cout<<arr[i]<<" ";
+		}
+		cout<<endl;
+	}
+}
+
+
+void funtest()
+{
+	int arr[]={1,2,3,4,3};
+	Perm(arr,5,2);
+}
+
+int main()
+{
+	funtest();
+	return 0;
+}
+
+
+
+
+//#include <iostream>
+//using namespace std;
+//
+//void Swap(char *a,char *b)
+//{
+//     char tmp=*a;
+//     *a=*b;
+//     *b=tmp;
+//}
+//
+////在pszStr数组中，[nBegin,nEnd)中是否有数字与下标为nEnd的数字相等  
+//bool IsSwap(char *pszStr, int nBegin, int nEnd)  
+//{  
+//    if(pszStr[nBegin]==pszStr[nEnd]&&nBegin!=nEnd) 
+//		return false;  
+//	else
+//		return true;
+//}  
+//
+////k表示当前选取到第几个数,m表示共有多少数.  
+//void AllRange(char *pszStr,int k,int m)
+//{
+//     if(k==m)
+//     {
+//         static int s_i=1;
+//         printf("第%d个排列是%s\n",s_i++,pszStr); 
+//     }
+//     else
+//     {
+//         for(int i=k;i<=m;i++)
+//         {
+//             if (IsSwap(pszStr,k,i))
+//             {
+//                 Swap(pszStr+i,pszStr+k);
+//                 AllRange(pszStr,k+1,m);
+//                 Swap(pszStr+i,pszStr+k);
+//             }  
+//         }
+//     }
+//}
+//
+//void Foo(char *pszStr)
+//{
+//     AllRange(pszStr,0,strlen(pszStr)-1);
+//}
+//
+//int main()  
+//{  
+//    printf("全排列的递归实现:\n");    
+//    char szTextStr[] = "122";  
+//    printf("%s的全排列如下:\n", szTextStr);  
+//    Foo(szTextStr);  
+//    system("pause");
+//    return 0;  
+//} 
+
+
+//
+//void Perm(int* arr,int size,int n)
+//{
+//	if(n<size)
+//	{
+//		for(int i=n;i<size;++i)
+//		{
+//			swap(arr[n],arr[i]);
+//			Perm(arr,size,n+1);
+//			swap(arr[n],arr[i]);
+//		}
+//	}
+//	else
+//	{
+//		for(int i=0;i<size;++i)
+//		{
+//			cout<<arr[i]<<" ";
+//		}
+//		cout<<endl;
+//	}
+//}
+
+//int main()
+//{
+//	int arr[]={1,2,3,4,3};
+//	Perm(arr,5,2);
+//	return 0;
+//}
+
+
+
+#include <iostream>
+using namespace std;
+
+//1
+//template<class T>
+//class A
+//{
+//public:
+//	A()
+//		:_a(0)
+//	{}
+//
+//	friend void fun(const A<T>& a)
+//	{
+//		A<int> a1;
+//		cout<<a1._a<<endl;
+//		cout<<a._a<<endl;
+//	}
+//	friend class B;
+//
+//private:
+//	T _a;
+//};
+//
+////void fun()
+////{
+////	A<int> a1;
+////	A<double> a2;
+////	a1._a=1;
+////	a2._a=1.0;
+////
+////	cout<<a1._a<<endl;
+////	cout<<a2._a<<endl;
+////}
+////
+////class B
+////{
+////public:
+////	void fun1(const A<T>& a)
+////	{
+////		cout<<"B::fun1(): "<<a._a<<" "<<_b<<endl;
+////	}
+////
+////private:
+////	int _b;
+////};
+//
+//int main()
+//{
+//	A<int> a;
+//	fun(a);
+//	return 0;
+//}
+
+//2
+//template<typename T>
+//class A
+//{
+//public:
+//	A()
+//		:_a(0)
+//	{}
+//
+//	template<class T1>
+//	friend void fun(const A<T1> a)
+//	{
+//		A<int> a1;
+//		cout<<a1._a<<endl;
+//		cout<<a._a<<endl;
+//	}
+//
+//	template<class T2>
+//	friend class B;
+//private:
+//	T _a;
+//};
+//
+////template<typename T1>
+////void fun()
+////{
+////	A<int> a1;
+////	A<double> a2;
+////	a1._a=1;
+////	a2._a=1.0;
+////
+////	cout<<a1._a<<endl;
+////	cout<<a2._a<<endl;
+////}
+//
+//
+//template<class T2>
+//class B
+//{
+//public:
+//	void fun1(const A<T2>& a)
+//	{
+//		cout<<"B::fun1(): "<<a._a<<" "<<_b<<endl;
+//	}
+//
+//private:
+//	int _b;
+//};
+//
+//
+//void funtest()
+//{
+//	/*fun<int>();
+//	fun<double>();*/
+//	A<int> a;
+//	fun<int>(a);
+//
+//	//B<int> b;
+//	//b.fun1(a1);
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+
+
+
+//3
+////template<typename T>
+////class A;
+//
+//template<class T1>
+//void fun();
+//
+//template<class T2>
+//class B;
+//
+//
+//template<typename T>
+//class A
+//{
+//	//template<class T1>
+//	friend void fun<int>();
+//	//template<class T2>
+//	friend class B<T>;
+//
+//	friend ostream& operator << <T>(ostream& _cout,const A<T>& a);
+//
+//private:
+//	T _a;
+//};
+//
+//template<typename T1>
+//void fun()
+//{
+//	A<int> a1;
+//	A<double> a2;
+//	//a1._a=1;
+//	a2._a=1.0;
+//	//cout<<a1._a<<endl;
+//	cout<<a2._a<<endl;
+//}
+//
+//
+//template<class T2>
+//class B
+//{
+//public:
+//	void fun1(const A<T2>& a)
+//	{
+//		cout<<"B::fun1(): "<<a._a<<" "<<_b<<endl;
+//	}
+//
+//private:
+//	int _b;
+//};
+//
+//
+//template<class T>
+//ostream& operator <<(ostream& _cout,const A<T>& a)
+//{
+//	_cout<<a._a;
+//	return _cout;
+//}
+//
+//
+//void funtest()
+//{
+//	fun<int>();
+//	//fun<double>();
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+
+
+
+//void Perm(int* arr,int size,int n)
+//{
+//	if(n<size)
+//	{
+//		for(int i=n;i<size;++i)
+//		{
+//			swap(arr[n],arr[i]);
+//			Perm(arr,size,n+1);
+//			swap(arr[n],arr[i]);
+//		}
+//	}
+//	else
+//	{
+//		for(int i=0;i<size;++i)
+//		{
+//			cout<<arr[i]<<" ";
+//		}
+//		cout<<endl;
+//	}
+//}
+//
+//
+//
+//void funtest()
+//{
+//	int arr[]={1,2,3,4,5};
+//	Perm(arr,5,2);
+//}
+//
+//int main()
+//{
+//	funtest();
+//	return 0;
+//}
+
+
+
+
+//template <typename T>
+// class C
+// {
+// private:
+//     T m[5];
+// public:
+//     friend void foo(const C<T>& t)
+//     {
+//         for (int i = 0; i < 5; ++i)
+//         {
+//             cout << (t.m[i]) << endl;
+//         }
+//     }
+// };
+//
+//
+// int main()
+// {
+//	 C<int> c;
+//	 foo(c);
+//	 return 0;
+// }
